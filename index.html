@@ -1076,16 +1076,21 @@ table.split td.c-div{border-left:2px solid rgba(34,211,167,.3)}
 
 <div class="section">
 <div class="stitle">Data Sources</div>
-<table><tr><th>Source</th><th>What</th><th>Vintage</th><th>Confidence</th></tr>
-<tr><td>USAspending</td><td>$944B Federal contracts, 75 NAICS, classified by sector/geography/agency</td><td>FY2022-2026</td><td><span class="tag th">High</span></td></tr>
-<tr><td>GC Contracts</td><td>658 GOLD CREEK contracts &mdash; agency relationships, capabilities</td><td>FY2022-present</td><td><span class="tag th">High</span></td></tr>
-<tr><td>Govwin</td><td>9,854 upcoming Federal opportunities &mdash; pipeline, set-aside, vehicles</td><td>Apr 2026 - Dec 2029</td><td><span class="tag th">High</span></td></tr>
-<tr><td>Census SUSB</td><td>Firm counts + receipts by NAICS and revenue band ($5-75M band for Target Firms and Addressable Market)</td><td>2022 (prior: 2017 for 5-yr CAGR)</td><td><span class="tag th">High</span></td></tr>
-<tr><td>BLS QCEW</td><td>County-level employment by NAICS</td><td>2023 Annual</td><td><span class="tag th">High</span></td></tr>
-<tr><td>SAM.gov / SBA</td><td>Federal-registered small business entity counts</td><td>Apr 2026</td><td><span class="tag tm">Medium</span> (SB only)</td></tr>
-<tr><td>Industry Reports</td><td>Commercial market sizes &mdash; Mordor, Grand View, IMARC, Precedence, IBISWorld</td><td>2024-2025</td><td><span class="tag tm">Medium</span></td></tr>
-<tr><td>GC Internal</td><td>Contract vehicles (8), capabilities (8 categories)</td><td>Apr 2026</td><td><span class="tag th">High</span></td></tr>
+<p class="sdesc" style="font-size:.88em;margin-bottom:10px">Complete source log with publisher, date accessed, and specific figures cited is maintained in <code>research/data/sources-registry.md</code> (SRC-ID system). Every quantitative figure on this dashboard traces to one of these sources.</p>
+<table><tr><th>Layer</th><th>Source</th><th>What</th><th>Vintage</th><th>Confidence</th></tr>
+<tr style="background:rgba(79,140,255,.06)"><td><strong>Federal</strong></td><td>USAspending</td><td>$944B Federal contracts, 75 NAICS, classified by sector/geography/agency via Fabric notebook (10 steps, 17 CSVs)</td><td>FY2022-2026</td><td><span class="tag th">High</span></td></tr>
+<tr style="background:rgba(79,140,255,.06)"><td><strong>Federal</strong></td><td>GC Contracts</td><td>658 GOLD CREEK contracts classified by zone (99.5% coverage after manual overrides)</td><td>FY2022-2026</td><td><span class="tag th">High</span></td></tr>
+<tr style="background:rgba(79,140,255,.06)"><td><strong>Federal</strong></td><td>Govwin</td><td>9,854 upcoming Federal opportunities &mdash; pipeline, set-aside, vehicles</td><td>Apr 2026 - Dec 2029</td><td><span class="tag th">High</span></td></tr>
+<tr style="background:rgba(79,140,255,.06)"><td><strong>Federal</strong></td><td>SAM.gov / SBA</td><td>Federal-registered small business entity counts</td><td>Apr 2026</td><td><span class="tag tm">Medium</span> (SB only)</td></tr>
+<tr style="background:rgba(34,211,167,.06)"><td><strong>Commercial L1</strong></td><td>Census SUSB 2017 &amp; 2022</td><td>Firm counts + receipts by NAICS and revenue-size band. <strong>Primary Commercial source</strong> &mdash; drives Addressable Market ($) + Target Firm counts for all 8 zones</td><td>2017, 2022 (Economic Census years only)</td><td><span class="tag th">High</span></td></tr>
+<tr style="background:rgba(34,211,167,.06)"><td><strong>Commercial L1</strong></td><td>Census Economic Census</td><td>NAICS-level commercial receipts baseline (same source data as SUSB)</td><td>2022 release</td><td><span class="tag th">High</span></td></tr>
+<tr style="background:rgba(34,211,167,.06)"><td><strong>Commercial L2</strong></td><td>BLS QCEW</td><td>Employment + wages by NAICS, quarterly. Current momentum signal (2-yr CAGR 2022-2024 as proxy for acceleration/deceleration vs. Layer 1 trailing)</td><td>2022-2024 Annual</td><td><span class="tag th">High</span></td></tr>
+<tr style="background:rgba(34,211,167,.06)"><td><strong>Commercial L3</strong></td><td>Public Company 10-Ks</td><td>20+ SEC filings (Leidos, CACI, SAIC, Accenture, Cognizant, CrowdStrike, ABM, Clean Harbors, Tetra Tech, Montrose, Booz Allen, Huron, Maximus, Evolent, L3Harris, Curtiss-Wright, Grainger, Sabre, etc.) &mdash; forward guidance + market commentary</td><td>FY2024-FY2025 filings</td><td><span class="tag tm">Medium</span> (shelf-life 18 mo)</td></tr>
+<tr style="background:rgba(34,211,167,.06)"><td><strong>Commercial L3</strong></td><td>Consulting firm reports</td><td>Gartner IT spending (Feb 2026), CompTIA IT Outlook 2026, McKinsey / Deloitte / Bain free insights, trade associations (HIMSS, CompTIA, AGC, NAHB, ISM, SEIA, GBTA)</td><td>2025-2026</td><td><span class="tag tm">Medium</span></td></tr>
+<tr style="background:rgba(34,211,167,.06)"><td><strong>Commercial L3</strong></td><td>Industry market research</td><td>MarketsandMarkets, Mordor Intelligence, Fortune Business Insights, Grand View, IMARC, IBISWorld &mdash; used for triangulation and ranges, not primary</td><td>2024-2026</td><td><span class="tag tm">Medium</span></td></tr>
+<tr><td><strong>GC Internal</strong></td><td>GC Internal</td><td>Contract vehicles (8 active GWACs/IDIQs), capabilities (8 zones), existing contract history</td><td>Apr 2026</td><td><span class="tag th">High</span></td></tr>
 </table>
+<p style="font-size:.82em;color:var(--dim);margin-top:8px"><em>Blue rows = Federal sources. Green rows = Commercial sources. "L1/L2/L3" = Commercial Layer 1 (Trailing) / Layer 2 (Current Momentum) / Layer 3 (Forward View) per the 3-Layer Framework in the Methodology section below.</em></p>
 </div>
 
 <div class="section" id="confidence-signal-definitions">
@@ -1151,20 +1156,98 @@ table.split td.c-div{border-left:2px solid rgba(34,211,167,.3)}
 
 <div class="section">
 <div class="stitle">Methodology</div>
-<details open><summary>Data Processing & Classification</summary><div class="dbody">
+
+<p class="sdesc" style="font-size:.9em;margin-bottom:14px">The analysis uses <strong>parallel Federal and Commercial pipelines</strong> that converge in the dashboard. Each side has its own data sources, classification methodology, and confidence rules. The Commercial side additionally applies a <strong>3-layer forward-view framework</strong> (Trailing / Current Momentum / Forward View) to extend authoritative historical data toward near-future expectations.</p>
+
+<details open><summary style="color:#4f8cff">Federal Methodology &mdash; USAspending + Fabric Pipeline</summary><div class="dbody">
 <p style="font-size:.9em;margin-bottom:8px"><strong>Source:</strong> USAspending full database via Microsoft Fabric (Delta Lake). 75 NAICS codes, FY2022-2026, AWARD records only (IDV ceiling values excluded).</p>
-<p style="font-size:.9em;margin-bottom:8px"><strong>Step 1 deduplication:</strong> One row per award_id_piid (removes duplicate transaction mods). GC-addressable CAGR: contracts &lt;$250M only &mdash; the market GC can compete in. April 2026 data refresh.</p>
-<p style="font-size:.9em;margin-bottom:8px"><strong>Three-layer classification:</strong></p>
+<p style="font-size:.9em;margin-bottom:8px"><strong>Step 1 deduplication:</strong> One row per award_id_piid (removes duplicate transaction modifications). This alone removed $68.6B in over-counting.</p>
+<p style="font-size:.9em;margin-bottom:8px"><strong>Addressable definition:</strong> Contracts with base_and_all_options_value &lt;$250M &mdash; the slice GC can realistically compete for as prime. Contracts &ge;$250M are mega-IDIQ / mega-program-level and excluded.</p>
+<p style="font-size:.9em;margin-bottom:8px"><strong>Three-layer classification logic:</strong></p>
 <ul class="bullets" style="margin-bottom:8px">
-<li><strong>Layer 1 &mdash; NAICS code:</strong> Coarse sector assignment</li>
-<li><strong>Layer 2 &mdash; PSC code:</strong> Structured middle filter</li>
-<li><strong>Layer 3 &mdash; Award description keywords:</strong> Precision classification (16 categories, ~30 sub-categories, ~460 stopwords)</li>
+<li><strong>Layer 1 &mdash; NAICS code:</strong> Coarse sector assignment (first filter)</li>
+<li><strong>Layer 2 &mdash; PSC code:</strong> Structured middle filter (product/service code)</li>
+<li><strong>Layer 3 &mdash; Award description keywords:</strong> Precision classification via regex (16 categories, ~30 sub-categories, ~460 stopwords tuned through 5 iterations)</li>
 </ul>
-<p style="font-size:.9em;margin-bottom:8px"><strong>Track A (61 narrow NAICS):</strong> Classified by NAICS code alone &mdash; code is specific enough to determine sector.</p>
-<p style="font-size:.9em"><strong>Track B (14 broad NAICS):</strong> Classified by keyword regex patterns &mdash; 63.3% classified after 5 iterations on deduped data. 36.7% unclassified (military codenames, empty descriptions, opaque text).</p>
+<p style="font-size:.9em;margin-bottom:8px"><strong>Track A (61 narrow NAICS):</strong> Classified by NAICS code alone &mdash; the code is specific enough to determine the sector.</p>
+<p style="font-size:.9em;margin-bottom:8px"><strong>Track B (14 broad NAICS):</strong> Classified by keyword regex on prime_award_base_transaction_description. <strong>63.3% classified</strong> after 5 iterations; 36.7% unclassified (military codenames, empty descriptions, opaque text). All Federal figures are therefore <strong>floor estimates</strong>.</p>
+<p style="font-size:.85em;color:var(--dim)"><strong>Data pipeline detail:</strong> See <code>research/data-pipeline-and-dashboard-process.md</code> and the PySpark notebook <code>research/fabric-notebook-goldcreek-analysis.py</code> (10 steps, 17 output CSVs).</p>
 </div></details>
-<details><summary>Equal-Weight Principle</summary><div class="dbody"><p style="font-size:.9em">Federal spending data is used for <strong>context and validation</strong> &mdash; to confirm real demand and identify geographic concentrations. It is NOT used to rank sector priority. All 8 GC capability categories start on equal footing. A $5B sector with exceptional growth may rank higher than a $50B sector with flat trends.</p></div></details>
-<details><summary>"Warm Not Hot" Standard</summary><div class="dbody"><p style="font-size:.9em">Targets must be in sectors with established, durable demand &mdash; not hype cycles, policy spikes, or unscaled emerging tech. <strong>Yes:</strong> PFAS remediation, IT managed services, facilities maintenance. <strong>No:</strong> AI startups, drone companies, pandemic-driven health spending.</p></div></details>
+
+<details><summary style="color:#22d3a7">Commercial Methodology &mdash; 3-Layer Framework</summary><div class="dbody">
+<p style="font-size:.9em;margin-bottom:10px">Trailing Census data is authoritative but 2-3 years lagged. The 3-layer framework extends the analysis toward current and near-future by combining historical baseline, current momentum indicators, and forward-looking industry signals.</p>
+
+<table style="margin-bottom:12px"><tr><th>Layer</th><th>Time Horizon</th><th>Primary Sources</th><th>Confidence</th></tr>
+<tr><td><strong>1. Trailing Baseline</strong></td><td>Past 5 yrs</td><td>Census SUSB 2017 &rarr; 2022 (Economic Census years only &mdash; receipts data published years ending in 2 and 7). Sum receipts across zone's commercial NAICS set, by firm revenue-size band.</td><td><span class="conf conf-h">High</span></td></tr>
+<tr><td><strong>2. Current Momentum</strong></td><td>Last 4-6 qtrs</td><td>BLS QCEW (Quarterly Census of Employment and Wages) 2022-2024 annual. Employment + wage CAGR as a proxy for whether market is accelerating vs. decelerating vs. Layer 1 trailing.</td><td><span class="conf conf-h">High</span></td></tr>
+<tr><td><strong>3. Forward View</strong></td><td>Next 1-2 yrs</td><td>Public 10-K MD&amp;A sections (3 Federal + 3 Commercial companies per zone), Gartner / CompTIA / McKinsey / Deloitte free industry reports, trade association outlooks, public company earnings guidance.</td><td><span class="conf conf-m">Med</span></td></tr>
+</table>
+
+<p style="font-size:.9em;margin-bottom:8px"><strong>Addressable definition:</strong> Receipts captured by firms in the $5-75M annual revenue band (SUSB bands 07-16). This is the slice of the commercial market GC's acquisition target would realistically compete in.</p>
+
+<p style="font-size:.9em;margin-bottom:8px"><strong>Sub-segment confidence tiers:</strong></p>
+<ul class="bullets" style="margin-bottom:8px">
+<li><strong>Tier A (High):</strong> Direct NAICS match to Census SUSB. Examples: Software &amp; SaaS (511210), Cloud &amp; Data Center (518210), App Development (541511)</li>
+<li><strong>Tier B (Medium):</strong> Parent NAICS with documented industry-report split factor. Example: Cybersecurity = 541512 parent &times; cyber industry % per Gartner</li>
+<li><strong>Tier C (Low):</strong> Proxy NAICS used; best-available substitute. Example: Network Infrastructure uses 541512 proxy when native 517xxx not available</li>
+</ul>
+
+<p style="font-size:.9em;margin-bottom:8px"><strong>Momentum synthesis:</strong> Compare Layer 2 to Layer 1, then confirm with Layer 3:</p>
+<ul class="bullets" style="margin-bottom:8px">
+<li>&uarr; <strong>Accelerating</strong> if Layer 2 &gt; Layer 1 AND Layer 3 sources positive</li>
+<li>&rarr; <strong>Steady</strong> if Layer 2 &asymp; Layer 1 trajectory</li>
+<li>&darr; <strong>Decelerating</strong> if Layer 2 &lt; Layer 1 OR Layer 3 sources cautious</li>
+</ul>
+
+<p style="font-size:.85em;color:var(--dim)"><strong>Methodology detail:</strong> See <code>research/commercial-methodology.md</code> for the full NAICS mapping per zone (Section 4), sub-segment mapping with Tier labels (Section 5), CAGR formulas (Section 6), and known gaps (Section 9).</p>
+</div></details>
+
+<details><summary style="color:#22d3a7">Forward View &mdash; 10-K Pull Methodology + Citation Rules</summary><div class="dbody">
+<p style="font-size:.9em;margin-bottom:8px"><strong>Target per zone:</strong> Up to 3 Federal-focused + 3 Commercial-focused public company 10-K filings. Travel zone has thin 10-K coverage; others are well-covered.</p>
+
+<p style="font-size:.9em;margin-bottom:8px"><strong>Companies pulled (20+ total 10-Ks):</strong></p>
+<ul class="bullets" style="font-size:.88em;margin-bottom:8px">
+<li><strong>IT/Cyber:</strong> Leidos, CACI, SAIC (Fed) + Accenture, Cognizant, CrowdStrike (Com)</li>
+<li><strong>Facilities:</strong> KBR, Jacobs, Fluor (Fed) + ABM, EMCOR, Comfort Systems (Com)</li>
+<li><strong>Energy/Enviro:</strong> Tetra Tech (Fed) + Clean Harbors, Montrose, Ameresco (Com)</li>
+<li><strong>Financial:</strong> Booz Allen, ICF (Fed) + Huron, FTI Consulting (Com)</li>
+<li><strong>Health:</strong> Maximus (Fed) + Premier, Evolent Health (Com)</li>
+<li><strong>PM/Admin:</strong> Maximus, ICF (Fed &mdash; reused) + Robert Half, ManpowerGroup (Com)</li>
+<li><strong>Products:</strong> L3Harris, Curtiss-Wright, Mercury Systems (Fed) + Grainger, DXP Enterprises (Com)</li>
+<li><strong>Travel:</strong> Sabre (Com) &mdash; thin coverage; supplemented with GBTA trade data</li>
+</ul>
+
+<p style="font-size:.9em;margin-bottom:8px"><strong>Extraction targets from each 10-K:</strong> Revenue + YoY growth, forward guidance (next FY %), strategic priorities, market commentary, headwind/tailwind signals. Key quote logged in sources registry.</p>
+
+<p style="font-size:.9em;margin-bottom:8px"><strong>Citation rules (every Layer 3 input must have):</strong></p>
+<ul class="bullets" style="margin-bottom:8px">
+<li>Publisher name and specific report title</li>
+<li>Publication / filing date</li>
+<li>URL to source</li>
+<li>Specific figure or quote used (not generic reference)</li>
+<li>SRC-ID entry in <code>research/data/sources-registry.md</code></li>
+</ul>
+
+<p style="font-size:.9em;margin-bottom:8px"><strong>Shelf-life rule:</strong> Forward-view citations &gt;18 months old auto-downgrade one confidence tier. Primary government data (Census / BLS / BEA) does not expire but refreshed annually per runbook.</p>
+
+<p style="font-size:.85em;color:var(--dim)"><strong>Source log:</strong> See <code>research/data/sources-registry.md</code> &mdash; contains SRC-IDs for every cited figure, organized by Tier 1 (government primary), Tier 2 (indicators), Tier 3 (consulting/trade/10-K).</p>
+</div></details>
+
+<details><summary>GC Contract Classification &mdash; How GC's Own Book Was Classified</summary><div class="dbody">
+<p style="font-size:.9em;margin-bottom:8px"><strong>Input:</strong> 658 GC contracts FY2022-2026 ($2.68B total ceiling value), pulled from USAspending using GC's known contract history.</p>
+<p style="font-size:.9em;margin-bottom:8px"><strong>Classification approach:</strong></p>
+<ul class="bullets" style="margin-bottom:8px">
+<li><strong>Track A contracts:</strong> Direct NAICS map to one of 8 GC capability zones</li>
+<li><strong>Track B contracts (broad NAICS):</strong> Keyword regex against contract description (same logic as the full Federal analysis)</li>
+<li><strong>Manual override layer:</strong> For contracts where neither approach produced a clean classification, 90+ description patterns were manually classified (e.g., DOJ/BOP camera &amp; fiber installation, USDA FFAVORS IT system). Overrides logged in <code>research/data/gc_contract_manual_overrides.csv</code></li>
+</ul>
+<p style="font-size:.9em;margin-bottom:8px"><strong>Final coverage:</strong> 99.5% of GC's contract value classified into the 8 zones. Only $12M (0.5%) remained unclassified after overrides.</p>
+<p style="font-size:.9em"><strong>Output:</strong> GC Fed Contracts figure per zone (shown on every zone card) = sum of FY22-26 ceiling value in that zone.</p>
+<p style="font-size:.85em;color:var(--dim);margin-top:8px"><strong>Scripts:</strong> <code>research/gc_contract_final.py</code> (primary), <code>research/gc_contract_classification.py</code> (base logic).</p>
+</div></details>
+
+<details><summary>Equal-Weight Principle</summary><div class="dbody"><p style="font-size:.9em">Federal spending data is used for <strong>context and validation</strong> &mdash; to confirm real demand and identify geographic concentrations. It is NOT used to rank sector priority on its own. All 8 GC capability categories start on equal footing in the composite scoring. A $5B sector with exceptional growth and strong commercial opportunity may rank higher than a $50B sector with flat trends.</p></div></details>
+<details><summary>"Warm Not Hot" Standard</summary><div class="dbody"><p style="font-size:.9em">Targets must be in sectors with established, durable demand &mdash; not hype cycles, policy spikes, or unscaled emerging tech. <strong>Yes:</strong> PFAS remediation, IT managed services, facilities maintenance, financial audit. <strong>No:</strong> AI startups, crypto, drone pure-plays, pandemic-driven public health spending.</p></div></details>
 <details><summary>Cross-Cutting Screening Filters</summary><div class="dbody"><table><tr><th>Filter</th><th>Requirement</th></tr>
 <tr><td>Purchase price / EV</td><td>$5M-$75M (1.0x-1.5x revenue typical)</td></tr><tr><td>Annual revenue</td><td>$5M-$75M</td></tr><tr><td>Min. GC-connectable</td><td>&ge;25% in a GC-relevant sector</td></tr><tr><td>Business maturity</td><td>&ge;5 years, established customer base</td></tr><tr><td>Revenue stability</td><td>No single customer >25-30%</td></tr><tr><td>Growth</td><td>Stable or growing</td></tr><tr><td>"Warm not hot"</td><td>Established sector, durable demand</td></tr><tr><td>Owner motivation</td><td>Liquidity event, retirement, or growth-limited-by-scale</td></tr><tr><td>Clean financials</td><td>GAAP or GAAP-ready; no material litigation</td></tr><tr><td>Integration readiness</td><td>Defined processes, not founder-dependent</td></tr></table></div></details>
 </div>
