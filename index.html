@@ -57,7 +57,10 @@ header .tags span{background:var(--card);padding:4px 14px;border-radius:16px;fon
 .wz-c.w7 .rk{color:var(--wz7)} .wz-c.w8 .rk{color:var(--wz8)}
 .wz-c h3{font-size:1.05em;margin-bottom:10px}
 .wz-c .mg{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:6px}
-.wz-c .m{padding:6px;background:rgba(255,255,255,.03);border-radius:5px}
+.wz-c .m{padding:6px;background:rgba(255,255,255,.03);border-radius:5px;border-left:3px solid transparent}
+.wz-c .m-fed{border-left-color:#4f8cff}
+.wz-c .m-com{border-left-color:#22d3a7}
+.wz-c .m-shared{border-left-color:#8b8fa3}
 .wz-c .m .mv{font-weight:700;font-size:.95em} .wz-c .m .ml{font-size:.7em;color:var(--dim)}
 .wz-c .arch{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);font-size:.82em;color:var(--dim)} .wz-c .arch strong{color:var(--text)}
 
@@ -72,6 +75,12 @@ header .tags span{background:var(--card);padding:4px 14px;border-radius:16px;fon
 .sig-warm{background:rgba(34,211,167,.12);color:var(--g)}
 .sig-stable{background:rgba(139,143,163,.15);color:var(--dim)}
 .sig-cool{background:rgba(255,107,107,.12);color:var(--r)}
+
+/* Momentum tags (forward-view synthesis) */
+.mom{display:inline-block;font-size:.78em;font-weight:700;margin-left:4px}
+.mom-up{color:var(--g)}
+.mom-flat{color:var(--dim)}
+.mom-down{color:var(--r)}
 
 /* Charts */
 .cg{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
@@ -127,8 +136,19 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 
 /* Sector metric row */
 .sm-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
-.sm{background:var(--card);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border)}
+.sm{background:var(--card);border-radius:8px;padding:12px;text-align:center;border:1px solid var(--border);border-top:3px solid transparent}
 .sm .sv{font-size:1.3em;font-weight:700} .sm .sl{font-size:.72em;color:var(--dim)}
+.sm.s-fed{border-top-color:#4f8cff}
+.sm.s-com{border-top-color:#22d3a7}
+.sm.s-shared{border-top-color:#8b8fa3}
+.sm-group-label{font-size:.75em;color:var(--dim);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin:8px 0 6px 2px}
+
+/* Sub-segment table Fed/Commercial column grouping */
+table.split th.h-fed{background:rgba(79,140,255,.10);color:#a9c2ff;border-bottom:2px solid rgba(79,140,255,.4)}
+table.split th.h-com{background:rgba(34,211,167,.10);color:#8de6c5;border-bottom:2px solid rgba(34,211,167,.4)}
+table.split td.c-fed{background:rgba(79,140,255,.03)}
+table.split td.c-com{background:rgba(34,211,167,.03)}
+table.split td.c-div{border-left:2px solid rgba(34,211,167,.3)}
 
 @media print{.tab-bar{display:none} .tab-panel,.sub-panel{display:block!important} body{background:#fff;color:#000}}
 </style>
@@ -145,7 +165,7 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <div class="tab-bar">
 <div class="tab-btn active" onclick="showTab('dash')">Dashboard</div>
 <div class="tab-btn" onclick="showTab('sectors')">Sector Deep Dives</div>
-<div class="tab-btn" onclick="showTab('market')">Market & Pipeline</div>
+<div class="tab-btn" onclick="showTab('market')">Market Landscape</div>
 <div class="tab-btn" onclick="showTab('broker')">Broker Brief</div>
 <div class="tab-btn" onclick="showTab('params')">Parameters & Methods</div>
 </div>
@@ -162,7 +182,7 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <div class="kpi-grid">
 <div class="kpi"><div class="v">$944B</div><div class="l">Federal Spend Analyzed (FY22-26)</div></div>
 <div class="kpi"><div class="v">8</div><div class="l">Capability Zones (5 Warm &middot; 2 Cool &middot; 1 Niche)</div></div>
-<div class="kpi"><div class="v">26,446</div><div class="l">$5M-$25M Target Firms (Census)</div></div>
+<div class="kpi"><div class="v">114,037</div><div class="l">$5M-$75M Target Firms (Census)</div></div>
 <div class="kpi"><div class="v">4,061</div><div class="l">GC-Relevant Pipeline Opps</div></div>
 <div class="kpi"><div class="v">$410B</div><div class="l">Forward Pipeline Value</div></div>
 <div class="kpi"><div class="v">9,854</div><div class="l">Total Govwin Opportunities</div></div>
@@ -170,23 +190,37 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 
 <div class="section">
 <div class="stitle">Warm Zone Rankings</div>
-<p class="sdesc">Eight GC capability zones ranked by composite score. Addressable CAGR uses contracts &lt;$250M &mdash; the market GC can compete&nbsp;in. GC Contracts shows GOLD CREEK&rsquo;s own contract value (FY22-25, base &amp; all options).</p>
+<p class="sdesc">Eight GC capability zones ranked by composite score. Federal Addr. CAGR uses contracts &lt;$250M &mdash; the market GC can compete&nbsp;in. GC Fed Contracts shows GOLD CREEK&rsquo;s own contract value (FY22-26, base &amp; all options).</p>
+<p class="sdesc" style="font-size:.82em;margin-bottom:12px">
+<strong>Legend:</strong>
+<span style="display:inline-block;width:10px;height:10px;background:#4f8cff;margin:0 4px 0 8px;vertical-align:middle;border-radius:2px"></span>Federal
+<span style="display:inline-block;width:10px;height:10px;background:#22d3a7;margin:0 4px 0 10px;vertical-align:middle;border-radius:2px"></span>Commercial
+<span style="display:inline-block;width:10px;height:10px;background:#8b8fa3;margin:0 4px 0 10px;vertical-align:middle;border-radius:2px"></span>Shared
+&nbsp;&middot;&nbsp;
+<span class="conf conf-h">H</span>&nbsp;High confidence &nbsp;
+<span class="conf conf-m">M</span>&nbsp;Medium &nbsp;
+<span class="conf conf-l">L</span>&nbsp;Low
+&nbsp;&middot;&nbsp;
+<span class="mom mom-up">&uarr;</span> Accelerating &nbsp;
+<span class="mom mom-flat">&rarr;</span> Steady &nbsp;
+<span class="mom mom-down">&darr;</span> Decelerating
+</p>
 <div class="wz-grid">
-<div class="wz-c w1"><div class="rk">#1 &middot; Score 35</div><h3>IT Managed Services & Cybersecurity <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m"><div class="mv">$197B</div><div class="ml">Federal Market</div></div><div class="m"><div class="mv pos">+4.8%</div><div class="ml">Addressable CAGR</div></div><div class="m"><div class="mv">$779M</div><div class="ml">GC Contracts</div></div><div class="m"><div class="mv">4,818</div><div class="ml">Target Firms</div></div><div class="m"><div class="mv">$64-70B</div><div class="ml">Commercial Mkt</div></div><div class="m"><div class="mv">683</div><div class="ml">Pipeline Opps</div></div><div class="m"><div class="mv">43%</div><div class="ml">SB Set-Aside</div></div></div><div class="arch"><strong>Target:</strong> $8-25M MSSP/MSP, 70%+ commercial MRR, VA/MD/TX.</div></div>
+<div class="wz-c w1"><div class="rk">#1 &middot; Score 35</div><h3>IT Managed Services & Cybersecurity <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m m-fed"><div class="mv">$197B <span class="conf conf-h">H</span></div><div class="ml">Federal Market</div></div><div class="m m-fed"><div class="mv">$150B <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. Mkt (&lt;$250M)</div></div><div class="m m-fed"><div class="mv pos">+4.8% <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. CAGR</div></div><div class="m m-fed"><div class="mv">$783M <span class="conf conf-h">H</span></div><div class="ml">GC Fed Contracts</div></div><div class="m m-fed"><div class="mv">43% <span class="conf conf-h">H</span></div><div class="ml">Fed SB Set-Aside</div></div><div class="m m-com"><div class="mv">$253B <span class="conf conf-h">H</span></div><div class="ml">Commercial Addr. Mkt ($5-75M)</div></div><div class="m m-com"><div class="mv pos">+8.0% <span class="conf conf-h">H</span> <span class="mom mom-up">&uarr;</span></div><div class="ml">Commercial Addr. CAGR</div></div><div class="m m-shared"><div class="mv">15,890 <span class="conf conf-h">H</span></div><div class="ml">Target Firms ($5-75M)</div></div></div><div class="arch"><strong>Commercial context:</strong> $253B addressable market ($5-75M firms), $1.6T total IT. <strong>Forward view (FY26 guidance from 10-Ks):</strong> Core IT services +3-6% (Accenture, Cognizant); Cyber +15-25% (CrowdStrike +23% ARR FY25); Cloud/AI +15-30% (Gartner). <strong>⚠ Federal headwind:</strong> DOGE agency realignment slowing awards (SAIC, Accenture -1-1.5% drag). <strong>Target:</strong> $8-75M MSSP/MSP, 70%+ commercial MRR, VA/MD/TX.</div></div>
 
-<div class="wz-c w2"><div class="rk">#2 &middot; Score 35</div><h3>Facilities Management & O&M <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m"><div class="mv">$104B</div><div class="ml">Federal Market</div></div><div class="m"><div class="mv pos">+2.0%</div><div class="ml">Addressable CAGR</div></div><div class="m"><div class="mv">$138M</div><div class="ml">GC Contracts</div></div><div class="m"><div class="mv">9,578</div><div class="ml">Target Firms</div></div><div class="m"><div class="mv">$283-300B</div><div class="ml">Commercial Mkt</div></div><div class="m"><div class="mv">1,583</div><div class="ml">Pipeline Opps</div></div><div class="m"><div class="mv">46%</div><div class="ml">SB Set-Aside</div></div></div><div class="arch"><strong>Target:</strong> $5-20M FM/HVAC company, recurring contracts, near military base.</div></div>
+<div class="wz-c w2"><div class="rk">#2 &middot; Score 35</div><h3>Facilities Management & O&M <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m m-fed"><div class="mv">$104B <span class="conf conf-h">H</span></div><div class="ml">Federal Market</div></div><div class="m m-fed"><div class="mv">$200B <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. Mkt (&lt;$250M)</div></div><div class="m m-fed"><div class="mv pos">+2.0% <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. CAGR</div></div><div class="m m-fed"><div class="mv">$143M <span class="conf conf-h">H</span></div><div class="ml">GC Fed Contracts</div></div><div class="m m-fed"><div class="mv">46% <span class="conf conf-h">H</span></div><div class="ml">Fed SB Set-Aside</div></div><div class="m m-com"><div class="mv">$634B <span class="conf conf-h">H</span></div><div class="ml">Commercial Addr. Mkt ($5-75M)</div></div><div class="m m-com"><div class="mv pos">+6.2% <span class="conf conf-h">H</span> <span class="mom mom-flat">&rarr;</span></div><div class="ml">Commercial Addr. CAGR</div></div><div class="m m-shared"><div class="mv">43,285 <span class="conf conf-h">H</span></div><div class="ml">Target Firms ($5-75M)</div></div></div><div class="arch"><strong>Commercial context:</strong> $634B addressable ($5-75M firms), $1.9T total facilities market. <strong>Forward view:</strong> ABM FY25 +4.8% org growth (US facility services $366B); EMCOR/Comfort Systems strong nonresidential; HVAC/Electrical leading (+8-14% Addr. CAGR). <strong>Target:</strong> $5-20M FM/HVAC company, recurring contracts, near military base.</div></div>
 
-<div class="wz-c w4"><div class="rk">#3 &middot; Score 30</div><h3>Financial Management & Audit <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m"><div class="mv">$10B</div><div class="ml">Federal Market</div></div><div class="m"><div class="mv neg">-4.6%</div><div class="ml">Addressable CAGR</div></div><div class="m"><div class="mv">$152M</div><div class="ml">GC Contracts</div></div><div class="m"><div class="mv">4,917</div><div class="ml">Target Firms</div></div><div class="m"><div class="mv">$145B</div><div class="ml">Commercial Mkt</div></div><div class="m"><div class="mv">322</div><div class="ml">Pipeline Opps</div></div><div class="m"><div class="mv">53%</div><div class="ml">SB Set-Aside</div></div></div><div class="arch"><strong>Target:</strong> $5-15M Oracle/SAP ERP or audit firm, DC metro. <em>Mixed signal: Audit sub-segment growing (+23%), overall sector flat due to Track A decline.</em></div></div>
+<div class="wz-c w4"><div class="rk">#3 &middot; Score 30</div><h3>Financial Management & Audit <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m m-fed"><div class="mv">$10B <span class="conf conf-h">H</span></div><div class="ml">Federal Market</div></div><div class="m m-fed"><div class="mv">$16B <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. Mkt (&lt;$250M)</div></div><div class="m m-fed"><div class="mv neg">-4.6% <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. CAGR</div></div><div class="m m-fed"><div class="mv">$152M <span class="conf conf-h">H</span></div><div class="ml">GC Fed Contracts</div></div><div class="m m-fed"><div class="mv">53% <span class="conf conf-h">H</span></div><div class="ml">Fed SB Set-Aside</div></div><div class="m m-com"><div class="mv">$41B <span class="conf conf-h">H</span></div><div class="ml">Commercial Addr. Mkt ($5-75M)</div></div><div class="m m-com"><div class="mv pos">+5.0% <span class="conf conf-h">H</span> <span class="mom mom-up">&uarr;</span></div><div class="ml">Commercial Addr. CAGR</div></div><div class="m m-shared"><div class="mv">3,298 <span class="conf conf-h">H</span></div><div class="ml">Target Firms ($5-75M)</div></div></div><div class="arch"><strong>Commercial context:</strong> $41B addressable ($5-75M firms), $556B total financial services. <strong>Forward view:</strong> Booz Allen FY25 +12.4% revenue, AI business +30% to $800M; Huron FY25 +12% RBR, 5 consecutive years of growth; FAR reform + AI integration tailwinds. <em>Mixed Federal signal: Audit sub-segment growing (+23%), overall sector flat due to Track A decline.</em> <strong>Target:</strong> $5-15M Oracle/SAP ERP or audit firm, DC metro.</div></div>
 
-<div class="wz-c w3"><div class="rk">#4 &middot; Score 24</div><h3>Energy & Environmental <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m"><div class="mv">$24B</div><div class="ml">Federal Market</div></div><div class="m"><div class="mv pos">+5.5%</div><div class="ml">Addressable CAGR</div></div><div class="m"><div class="mv">$69M</div><div class="ml">GC Contracts</div></div><div class="m"><div class="mv">1,131</div><div class="ml">Target Firms</div></div><div class="m"><div class="mv">$22B</div><div class="ml">Commercial Mkt</div></div><div class="m"><div class="mv">116</div><div class="ml">Pipeline Opps</div></div><div class="m"><div class="mv">57%</div><div class="ml">SB Set-Aside</div></div></div><div class="arch"><strong>Target:</strong> $5-15M PFAS remediation or energy services, CO/WA/SC.</div></div>
+<div class="wz-c w3"><div class="rk">#4 &middot; Score 24</div><h3>Energy & Environmental <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m m-fed"><div class="mv">$24B <span class="conf conf-h">H</span></div><div class="ml">Federal Market</div></div><div class="m m-fed"><div class="mv">$19B <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. Mkt (&lt;$250M)</div></div><div class="m m-fed"><div class="mv pos">+5.5% <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. CAGR</div></div><div class="m m-fed"><div class="mv">$69M <span class="conf conf-h">H</span></div><div class="ml">GC Fed Contracts</div></div><div class="m m-fed"><div class="mv">57% <span class="conf conf-h">H</span></div><div class="ml">Fed SB Set-Aside</div></div><div class="m m-com"><div class="mv">$45B <span class="conf conf-h">H</span></div><div class="ml">Commercial Addr. Mkt ($5-75M)</div></div><div class="m m-com"><div class="mv pos">+6.3% <span class="conf conf-h">H</span> <span class="mom mom-up">&uarr;</span></div><div class="ml">Commercial Addr. CAGR</div></div><div class="m m-shared"><div class="mv">3,338 <span class="conf conf-h">H</span></div><div class="ml">Target Firms ($5-75M)</div></div></div><div class="arch"><strong>Commercial context:</strong> $45B addressable ($5-75M firms), $177B total env/energy. <strong>Forward view:</strong> Remediation market +8.2% CAGR 2025-2030 (MarketsandMarkets); Montrose on $1.5B USAF PFAS MATOC; Clean Harbors expanding via acquisitions; Ameresco federal + commercial energy services; PFAS regulatory tailwind. <strong>Target:</strong> $5-15M PFAS remediation or energy services, CO/WA/SC.</div></div>
 
-<div class="wz-c w5"><div class="rk">#5 &middot; Score 23</div><h3>Health IT & Clinical Services <span class="zl zl-cool">COOL</span></h3><div class="mg"><div class="m"><div class="mv">$24B</div><div class="ml">Federal Market</div></div><div class="m"><div class="mv neg">-14.5%</div><div class="ml">Addressable CAGR</div></div><div class="m"><div class="mv">$204M</div><div class="ml">GC Contracts</div></div><div class="m"><div class="mv">2,633</div><div class="ml">Target Firms</div></div><div class="m"><div class="mv">$104B</div><div class="ml">Commercial Mkt</div></div><div class="m"><div class="mv">133</div><div class="ml">Pipeline Opps</div></div><div class="m"><div class="mv">40%</div><div class="ml">SB Set-Aside</div></div></div><div class="arch"><strong>Warm pockets:</strong> Social Services (+46.8%), Health General stable (-3.7%). <strong>Target:</strong> $5-20M Health IT/EHR firm, Cerner/Epic, MD/VA corridor.</div></div>
+<div class="wz-c w5"><div class="rk">#5 &middot; Score 23</div><h3>Health IT & Clinical Services <span class="zl zl-cool">COOL</span></h3><div class="mg"><div class="m m-fed"><div class="mv">$24B <span class="conf conf-h">H</span></div><div class="ml">Federal Market</div></div><div class="m m-fed"><div class="mv">$20B <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. Mkt (&lt;$250M)</div></div><div class="m m-fed"><div class="mv neg">-14.5% <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. CAGR</div></div><div class="m m-fed"><div class="mv">$204M <span class="conf conf-h">H</span></div><div class="ml">GC Fed Contracts</div></div><div class="m m-fed"><div class="mv">40% <span class="conf conf-h">H</span></div><div class="ml">Fed SB Set-Aside</div></div><div class="m m-com"><div class="mv">$264B <span class="conf conf-h">H</span></div><div class="ml">Commercial Addr. Mkt ($5-75M)</div></div><div class="m m-com"><div class="mv pos">+3.5% <span class="conf conf-h">H</span> <span class="mom mom-up">&uarr;</span></div><div class="ml">Commercial Addr. CAGR</div></div><div class="m m-shared"><div class="mv">17,528 <span class="conf conf-h">H</span></div><div class="ml">Target Firms ($5-75M)</div></div></div><div class="arch"><strong>Commercial context:</strong> $264B addressable ($5-75M firms), $2.2T total health services. <strong>Forward view:</strong> Digital health $427B 2025 &rarr; $1.5T 2032 (strong tailwind); Maximus FY25 $5.4B +2.4%; Evolent FY24 $2.55B +30% YoY; Premier healthcare tech platform. <strong>Warm pockets:</strong> Social Services (+46.8% Fed), Health General stable. <strong>Target:</strong> $5-20M Health IT/EHR firm, Cerner/Epic, MD/VA corridor.</div></div>
 
-<div class="wz-c w6"><div class="rk">#6 &middot; Score 22</div><h3>Program Management & Admin <span class="zl zl-cool">COOL</span></h3><div class="mg"><div class="m"><div class="mv">$27B</div><div class="ml">Federal Market</div></div><div class="m"><div class="mv neg">-6.3%</div><div class="ml">Addressable CAGR</div></div><div class="m"><div class="mv">$616M</div><div class="ml">GC Contracts</div></div><div class="m"><div class="mv">2,976</div><div class="ml">Target Firms</div></div><div class="m"><div class="mv">$36-71B</div><div class="ml">Commercial Mkt</div></div><div class="m"><div class="mv">70</div><div class="ml">Pipeline Opps</div></div><div class="m"><div class="mv">73%</div><div class="ml">SB Set-Aside</div></div></div><div class="arch"><strong>Warm pockets:</strong> Legal/Litigation (+16.1%), Records Mgmt (+3.6%). <strong>Target:</strong> $5-20M contact center or admin services, bilingual, TX/FL, 65%+ commercial.</div></div>
+<div class="wz-c w6"><div class="rk">#6 &middot; Score 22</div><h3>Program Management & Admin <span class="zl zl-cool">COOL</span></h3><div class="mg"><div class="m m-fed"><div class="mv">$27B <span class="conf conf-h">H</span></div><div class="ml">Federal Market</div></div><div class="m m-fed"><div class="mv">$40B <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. Mkt (&lt;$250M)</div></div><div class="m m-fed"><div class="mv neg">-6.3% <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. CAGR</div></div><div class="m m-fed"><div class="mv">$618M <span class="conf conf-h">H</span></div><div class="ml">GC Fed Contracts</div></div><div class="m m-fed"><div class="mv">73% <span class="conf conf-h">H</span></div><div class="ml">Fed SB Set-Aside</div></div><div class="m m-com"><div class="mv">$256B <span class="conf conf-h">H</span></div><div class="ml">Commercial Addr. Mkt ($5-75M)</div></div><div class="m m-com"><div class="mv pos">+5.2% <span class="conf conf-h">H</span> <span class="mom mom-flat">&rarr;</span></div><div class="ml">Commercial Addr. CAGR</div></div><div class="m m-shared"><div class="mv">18,969 <span class="conf conf-h">H</span></div><div class="ml">Target Firms ($5-75M)</div></div></div><div class="arch"><strong>Commercial context:</strong> $256B addressable ($5-75M firms), $1.1T total PM/admin/staffing. <strong>Forward view:</strong> Robert Half FY26 +2-3% constant currency; ManpowerGroup challenged NA/Europe, strong LatAm/APAC; 40% of hiring managers plan contract pros; AI reshaping staffing. <em>Federal COOL due to DOGE; commercial mid-single-digit steady.</em> <strong>Warm pockets:</strong> Legal/Litigation (+16.1% Fed), Records Mgmt (+3.6% Fed). <strong>Target:</strong> $5-20M contact center or admin services, bilingual, TX/FL, 65%+ commercial.</div></div>
 
-<div class="wz-c w7"><div class="rk">#7 &middot; Score 22</div><h3>Products & Tactical <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m"><div class="mv">$29B</div><div class="ml">Federal Market</div></div><div class="m"><div class="mv pos">+7.7%</div><div class="ml">Addressable CAGR</div></div><div class="m"><div class="mv">$574M</div><div class="ml">GC Contracts</div></div><div class="m"><div class="mv">TBD</div><div class="ml">Target Firms</div></div><div class="m"><div class="mv">$45-60B</div><div class="ml">Commercial Mkt</div></div><div class="m"><div class="mv">TBD</div><div class="ml">Pipeline Opps</div></div><div class="m"><div class="mv">TBD</div><div class="ml">SB Set-Aside</div></div></div><div class="arch"><strong>Note:</strong> 86.5% DOD. Prime-dominated; GC role is distribution. <strong>Archetype:</strong> $5-15M specialty equipment distributor, telecom/power/UAS, commercial customers.</div></div>
+<div class="wz-c w7"><div class="rk">#7 &middot; Score 22</div><h3>Products & Tactical <span class="zl zl-warm">WARM</span></h3><div class="mg"><div class="m m-fed"><div class="mv">$29B <span class="conf conf-h">H</span></div><div class="ml">Federal Market</div></div><div class="m m-fed"><div class="mv">$191B <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. Mkt (&lt;$250M)</div></div><div class="m m-fed"><div class="mv pos">+7.7% <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. CAGR</div></div><div class="m m-fed"><div class="mv">$633M <span class="conf conf-h">H</span></div><div class="ml">GC Fed Contracts</div></div><div class="m m-fed"><div class="mv">TBD</div><div class="ml">Fed SB Set-Aside</div></div><div class="m m-com"><div class="mv">$123B <span class="conf conf-h">H</span></div><div class="ml">Commercial Addr. Mkt ($5-75M)</div></div><div class="m m-com"><div class="mv pos">+2.2% <span class="conf conf-h">H</span> <span class="mom mom-flat">&rarr;</span></div><div class="ml">Commercial Addr. CAGR</div></div><div class="m m-shared"><div class="mv">7,519 <span class="conf conf-h">H</span></div><div class="ml">Target Firms ($5-75M)</div></div></div><div class="arch"><strong>Commercial context:</strong> $123B addressable ($5-75M firms), $1.1T total products/distribution. <strong>Forward view (10-Ks):</strong> Curtiss-Wright FY25 +12%, FY26 double-digit EPS; L3Harris FY25 +3% ($21.9B); Grainger Q2'25 +5.6%. <em>Federal strong (+7.7% defense); commercial distribution more modest.</em> <strong>Note:</strong> 86.5% DOD. Prime-dominated; GC role is distribution. <strong>Archetype:</strong> $5-15M specialty equipment distributor, telecom/power/UAS, commercial customers.</div></div>
 
-<div class="wz-c w8"><div class="rk">#8 &middot; Score 15</div><h3>Travel Services <span class="zl zl-niche">NICHE</span></h3><div class="mg"><div class="m"><div class="mv">$1.4B</div><div class="ml">Federal Market</div></div><div class="m"><div class="mv pos">+29.9%</div><div class="ml">Addressable CAGR</div></div><div class="m"><div class="mv">$5M</div><div class="ml">GC Contracts</div></div><div class="m"><div class="mv">TBD</div><div class="ml">Target Firms</div></div><div class="m"><div class="mv">~$350B</div><div class="ml">Commercial Mkt</div></div><div class="m"><div class="mv">TBD</div><div class="ml">Pipeline Opps</div></div><div class="m"><div class="mv">TBD</div><div class="ml">SB Set-Aside</div></div></div><div class="arch"><strong>Note:</strong> Very small market. CAGR reflects post-COVID travel recovery. Not yet in Govwin pipeline. <strong>Archetype:</strong> $5-10M corporate travel management company, GSA schedule preferred.</div></div>
+<div class="wz-c w8"><div class="rk">#8 &middot; Score 15</div><h3>Travel Services <span class="zl zl-niche">NICHE</span></h3><div class="mg"><div class="m m-fed"><div class="mv">$1.4B <span class="conf conf-h">H</span></div><div class="ml">Federal Market</div></div><div class="m m-fed"><div class="mv">$2.1B <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. Mkt (&lt;$250M)</div></div><div class="m m-fed"><div class="mv pos">+29.9% <span class="conf conf-h">H</span></div><div class="ml">Fed Addr. CAGR</div></div><div class="m m-fed"><div class="mv">$5M <span class="conf conf-h">H</span></div><div class="ml">GC Fed Contracts</div></div><div class="m m-fed"><div class="mv">TBD</div><div class="ml">Fed SB Set-Aside</div></div><div class="m m-com"><div class="mv">$56B <span class="conf conf-h">H</span></div><div class="ml">Commercial Addr. Mkt ($5-75M)</div></div><div class="m m-com"><div class="mv pos">+2.2% <span class="conf conf-h">H</span> <span class="mom mom-flat">&rarr;</span></div><div class="ml">Commercial Addr. CAGR</div></div><div class="m m-shared"><div class="mv">4,210 <span class="conf conf-h">H</span></div><div class="ml">Target Firms ($5-75M)</div></div></div><div class="arch"><strong>Commercial context:</strong> $56B addressable ($5-75M firms), $275B total travel/lodging. <strong>Forward view:</strong> Travel tech $7.1B 2025 &rarr; $15.3B 2035 (+8% CAGR); Sabre FY25 +1%, single-segment post-hospitality sale, AI platform launch. <em>Very small Federal market; Fed CAGR reflects post-COVID recovery. Not yet in Govwin pipeline.</em> <strong>Archetype:</strong> $5-10M corporate travel management company, GSA schedule preferred.</div></div>
 </div>
 </div>
 
@@ -202,7 +236,7 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <tr><td>Federal market size</td><td><span class="tag th">5</span></td><td><span class="tag th">5</span></td><td><span class="tag tl">1</span></td><td><span class="tag tl">2</span></td><td><span class="tag tl">2</span></td><td><span class="tag tm">3</span></td><td><span class="tag tm">3</span></td><td><span class="tag tl">1</span></td></tr>
 <tr><td>Federal growth (CAGR)</td><td><span class="tag th">4</span></td><td><span class="tag tl">2</span></td><td><span class="tag tm">3</span></td><td><span class="tag th">4</span></td><td><span class="tag tl">1</span></td><td><span class="tag tl">1</span></td><td><span class="tag tm">3</span></td><td><span class="tag tm">3</span></td></tr>
 <tr><td>Commercial market size</td><td><span class="tag th">4</span></td><td><span class="tag th">5</span></td><td><span class="tag th">5</span></td><td><span class="tag tl">2</span></td><td><span class="tag th">5</span></td><td><span class="tag tm">3</span></td><td><span class="tag th">4</span></td><td><span class="tag tl">2</span></td></tr>
-<tr><td>Target pool ($5-25M)</td><td><span class="tag th">4</span></td><td><span class="tag th">5</span></td><td><span class="tag th">4</span></td><td><span class="tag tl">1</span></td><td><span class="tag tl">2</span></td><td><span class="tag tm">3</span></td><td><span class="tag tl">2</span></td><td><span class="tag tl">1</span></td></tr>
+<tr><td>Target pool ($5-75M)</td><td><span class="tag th">4</span></td><td><span class="tag th">5</span></td><td><span class="tag th">4</span></td><td><span class="tag tl">1</span></td><td><span class="tag tl">2</span></td><td><span class="tag tm">3</span></td><td><span class="tag tl">2</span></td><td><span class="tag tl">1</span></td></tr>
 <tr><td>GC capability overlap</td><td><span class="tag th">5</span></td><td><span class="tag th">5</span></td><td><span class="tag th">5</span></td><td><span class="tag tm">3</span></td><td><span class="tag tm">3</span></td><td><span class="tag tm">3</span></td><td><span class="tag th">4</span></td><td><span class="tag tm">3</span></td></tr>
 <tr><td>Durability</td><td><span class="tag th">5</span></td><td><span class="tag th">5</span></td><td><span class="tag th">4</span></td><td><span class="tag th">5</span></td><td><span class="tag th">4</span></td><td><span class="tag tm">3</span></td><td><span class="tag tm">3</span></td><td><span class="tag tl">2</span></td></tr>
 <tr><td>Pipeline strength</td><td><span class="tag th">5</span></td><td><span class="tag th">5</span></td><td><span class="tag th">4</span></td><td><span class="tag tm">3</span></td><td><span class="tag tm">3</span></td><td><span class="tag tl">1</span></td><td><span class="tag tl">1</span></td><td><span class="tag tl">1</span></td></tr>
@@ -214,9 +248,9 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <p style="margin-bottom:6px"><strong>Scores are qualitative assessments</strong> (1&ndash;5) based on relative comparison across the 8 sectors. They are not formula-driven. Each dimension considers:</p>
 <ul style="margin:0;padding-left:18px">
 <li><strong>Federal market size</strong> &mdash; Total addressable Federal contract $ (FY22-26, base &amp; all options value)</li>
-<li><strong>Federal growth (CAGR)</strong> &mdash; GC-addressable CAGR for contracts &lt;$250M (FY22-25). Filters out mega-contracts GC cannot compete for</li>
+<li><strong>Federal growth (CAGR)</strong> &mdash; GC-addressable CAGR for contracts &lt;$250M (FY22-26). Filters out mega-contracts GC cannot compete for</li>
 <li><strong>Commercial market size</strong> &mdash; Total US commercial market in the sector (industry reports, Census data)</li>
-<li><strong>Target pool ($5-25M)</strong> &mdash; Number of firms in the $5M-$25M revenue range (Census SUSB 2022 receipt-size tables)</li>
+<li><strong>Target pool ($5-75M)</strong> &mdash; Number of firms in the $5M-$75M revenue range (Census SUSB 2022 receipt-size tables)</li>
 <li><strong>GC capability overlap</strong> &mdash; How closely the sector maps to GC&rsquo;s existing contract history, NAICS codes, and workforce</li>
 <li><strong>Durability</strong> &mdash; &ldquo;Warm not hot&rdquo; standard: will demand persist 10+ years? Regulatory-driven and non-cyclical scores highest</li>
 <li><strong>Pipeline strength</strong> &mdash; Volume of Govwin forward pipeline opportunities (Apr 2026&ndash;Dec 2029) classified to this sector</li>
@@ -232,6 +266,20 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <div id="tab-sectors" class="tab-panel">
 <div class="stitle">Sector Deep Dives</div>
 <p class="sdesc">Full profiles for each capability zone: Federal market data, sub-segments, competitive landscape, commercial analogue, durability, acquisition archetype (mock company), screening criteria, strategic rationale, and risk factors.</p>
+<p class="sdesc" style="font-size:.82em;margin-bottom:12px">
+<strong>Legend:</strong>
+<span style="display:inline-block;width:10px;height:10px;background:#4f8cff;margin:0 4px 0 8px;vertical-align:middle;border-radius:2px"></span>Federal
+<span style="display:inline-block;width:10px;height:10px;background:#22d3a7;margin:0 4px 0 10px;vertical-align:middle;border-radius:2px"></span>Commercial
+<span style="display:inline-block;width:10px;height:10px;background:#8b8fa3;margin:0 4px 0 10px;vertical-align:middle;border-radius:2px"></span>Shared
+&nbsp;&middot;&nbsp;
+<span class="conf conf-h">H</span>&nbsp;High confidence &nbsp;
+<span class="conf conf-m">M</span>&nbsp;Medium &nbsp;
+<span class="conf conf-l">L</span>&nbsp;Low
+&nbsp;&middot;&nbsp;
+<span class="mom mom-up">&uarr;</span> Accelerating &nbsp;
+<span class="mom mom-flat">&rarr;</span> Steady &nbsp;
+<span class="mom mom-down">&darr;</span> Decelerating
+</p>
 
 <div class="sub-tabs">
 <div class="sub-btn s1 active" onclick="showSub('s1')">IT / Cybersecurity</div>
@@ -246,33 +294,79 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 
 <!-- SECTOR 1: IT/CYBER -->
 <div id="sub-s1" class="sub-panel active">
-<div class="sm-row">
-<div class="sm"><div class="sv">$197B</div><div class="sl">Federal Market (FY22-26)</div></div>
-<div class="sm"><div class="sv pos">+4.8%</div><div class="sl">Addressable CAGR</div></div>
-<div class="sm"><div class="sv pos">+7.8%</div><div class="sl">Full CAGR</div></div>
-<div class="sm"><div class="sv">240,465</div><div class="sl">Contract Count</div></div>
-<div class="sm"><div class="sv">4,818</div><div class="sl">Target Firms (Census)</div></div>
-<div class="sm"><div class="sv">683</div><div class="sl">Pipeline Opps</div></div>
-<div class="sm"><div class="sv">$779M</div><div class="sl">GC Contracts (FY22-25)</div></div>
-</div>
-<p class="sdesc"><strong>Top Agencies:</strong> DOD (47.4%), VA (11.9%), HHS (8.9%), DHS (7.9%) | <strong>Top States:</strong> Virginia ($84B), DC ($33B), Maryland ($30B), Texas ($18B)</p>
 
-<details open><summary>Sub-segments</summary><div class="dbody">
-<table><tr><th>Sub-segment</th><th class="n">$ (FY22-26)</th><th class="n">Addr. CAGR</th><th>Signal</th></tr>
-<tr><td>IT General (managed services, modernization)</td><td class="n">$59.4B</td><td class="n">+2.4%</td><td><span class="sig sig-stable">STABLE</span></td></tr>
-<tr><td>Software Licensing & SaaS</td><td class="n">$52.3B</td><td class="n">+7.3%</td><td><span class="sig sig-warm">WARM</span></td></tr>
-<tr><td>Cybersecurity (SOC, zero trust, CDM, SIEM)</td><td class="n">$39.6B</td><td class="n">+11.8%</td><td><span class="sig sig-warm">WARM</span></td></tr>
-<tr><td>Cloud & Data Center</td><td class="n">$24.8B</td><td class="n">+0.2%</td><td><span class="sig sig-stable">STABLE</span></td></tr>
-<tr><td>Network Infrastructure</td><td class="n">$13.3B</td><td class="n">+12.1%</td><td><span class="sig sig-warm">WARM</span></td></tr>
-<tr><td>Health IT & EHR</td><td class="n">$7.5B</td><td class="n">-7.2%</td><td><span class="sig sig-cool">COOL</span></td></tr>
-<tr><td>Application Development (DevSecOps)</td><td class="n">$5.7B</td><td class="n">-17.1%</td><td><span class="sig sig-cool">COOL</span></td></tr>
-<tr><td>Help Desk & Managed Services</td><td class="n">$4.1B</td><td class="n">-17.5%</td><td><span class="sig sig-cool">COOL</span></td></tr>
-<tr><td><em>Track A NAICS (software, telecom, equipment)</em></td><td class="n"><em>~$47.2B</em></td><td class="n"><em>+8.3%</em></td><td><span class="sig sig-warm">WARM</span></td></tr>
-</table></div></details>
+<div class="sm-group-label">Federal</div>
+<div class="sm-row">
+<div class="sm s-fed"><div class="sv">$197B <span class="conf conf-h">H</span></div><div class="sl">Federal Market (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">$150B <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. Market (&lt;$250M)</div></div>
+<div class="sm s-fed"><div class="sv pos">+4.8% <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. CAGR</div></div>
+<div class="sm s-fed"><div class="sv">$783M <span class="conf conf-h">H</span></div><div class="sl">GC Fed Contracts (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">683 <span class="conf conf-h">H</span></div><div class="sl">Fed Pipeline Opps</div></div>
+<div class="sm s-fed"><div class="sv">43% <span class="conf conf-h">H</span></div><div class="sl">Fed SB Set-Aside</div></div>
+<div class="sm s-fed"><div class="sv">&rarr; Steady</div><div class="sl">Fed Forward Momentum</div></div>
+</div>
+
+<div class="sm-group-label">Commercial</div>
+<div class="sm-row">
+<div class="sm s-com"><div class="sv">$1,609B <span class="conf conf-h">H</span></div><div class="sl">Commercial Full Mkt (2022)</div></div>
+<div class="sm s-com"><div class="sv pos">+10.5% <span class="conf conf-h">H</span></div><div class="sl">Commercial Full CAGR (5yr)</div></div>
+<div class="sm s-com"><div class="sv">$253B <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. Mkt ($5-75M)</div></div>
+<div class="sm s-com"><div class="sv pos">+8.0% <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. CAGR</div></div>
+<div class="sm s-com"><div class="sv pos">&uarr; Accelerating</div><div class="sl">Forward Momentum</div></div>
+</div>
+
+<div class="sm-group-label">Shared</div>
+<div class="sm-row">
+<div class="sm s-shared"><div class="sv">15,890 <span class="conf conf-h">H</span></div><div class="sl">Target Firms ($5-75M, Census)</div></div>
+</div>
+
+<p class="sdesc"><strong>Top Agencies (Federal):</strong> DOD (47.4%), VA (11.9%), HHS (8.9%), DHS (7.9%) | <strong>Top States (Federal):</strong> Virginia ($84B), DC ($33B), Maryland ($30B), Texas ($18B)</p>
+<p class="sdesc" style="font-size:.82em;margin-top:6px"><strong>Commercial sourcing:</strong> Census SUSB 2017 &amp; 2022 (Tier 1, High confidence); 7 IT NAICS aggregate (511210, 513210, 518210, 541511-541519, 541715). <strong>Layer 2 momentum:</strong> QCEW 2022-24 wage CAGR +7.1%. <strong>Layer 3 forward view (10-Ks, FY25 filings):</strong> Accenture FY26 guidance +2-5% total / +3-6% ex-Federal; Cognizant FY25 guidance +2.6-5.1% / +3.5-6% constant currency; CrowdStrike FY25 ARR +23% YoY to $4.24B (path to $10B); Gartner 2026 forecast +10.8% WW IT / +8.9% Enterprise CAGR 2024-29; CompTIA 2026 Outlook 77% positive sentiment. <strong>Federal 10-Ks:</strong> Leidos FY25 +3%; CACI FY25 +7.2% organic (Federal civilian +19.9%); SAIC FY25 +3.1%.</p>
+
+<div style="background:rgba(255,217,61,.06);border:1px solid rgba(255,217,61,.25);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:.88em">
+<strong style="color:var(--y)">&#9888; Notable signals from 10-K pull (April 2026):</strong>
+<ul class="bullets" style="margin-top:8px;margin-bottom:0">
+<li><strong>DOGE headwind is material for Federal IT.</strong> SAIC explicitly flags Department of Government Efficiency agency realignment as slowing new awards. Accenture quantifies the US Federal drag at <strong>-1 to -1.5% on their total revenue</strong>. This is a new Federal-IT forward signal not reflected in historical Census data.</li>
+<li><strong>Commercial IT services are moderating.</strong> Accenture FY26 guidance +2-5% and Cognizant FY25 +2.6-5.1% are notably slower than Census trailing (+10.5% 2017-2022). The blended commercial core is now mid-single-digit growth, not double-digit.</li>
+<li><strong>Cyber is the standout.</strong> CrowdStrike +23% ARR (Federal-adjacent but commercially-dominated) is 2-3&times; the broader IT growth rate. Industry consensus of +11-12% may actually be conservative vs. pure-play performance.</li>
+<li><strong>Federal civilian &gt;&gt; Federal defense for growth.</strong> CACI reports Federal civilian +19.9% growth. Worth factoring into agency targeting within GC's zone mix.</li>
+<li><strong>AI investment is universal and driving pricing power.</strong> Accenture doubling AI workforce to 80K; CrowdStrike "AI-native" platform; Cognizant AI-led platforms. Implications for platform consolidation and margin.</li>
+</ul>
+<p style="margin-top:10px;font-size:.85em;color:var(--dim);margin-bottom:0">Sources: Leidos FY25 10-K (SRC-100), CACI FY25 10-K (SRC-101), SAIC FY25 10-K (SRC-102), Accenture FY25 10-K (SRC-105), Cognizant FY24 10-K (SRC-106), CrowdStrike FY25 10-K (SRC-107). All accessed 2026-04-21.</p>
+</div>
+
+<details open><summary>Sub-segments &mdash; Federal + Commercial</summary><div class="dbody">
+<table class="split">
+<tr>
+<th rowspan="2">Sub-segment</th>
+<th colspan="4" class="h-fed" style="text-align:center">Federal</th>
+<th colspan="4" class="h-com c-div" style="text-align:center">Commercial</th>
+</tr>
+<tr>
+<th class="n h-fed">$ (FY22-26)</th>
+<th class="n h-fed">Addr. CAGR</th>
+<th class="h-fed">Signal</th>
+<th class="h-fed">Conf</th>
+<th class="n h-com c-div">Full CAGR</th>
+<th class="n h-com">Addr. CAGR</th>
+<th class="h-com">Signal</th>
+<th class="h-com">Conf</th>
+</tr>
+<tr><td>IT General (managed services, modernization)</td><td class="n c-fed">$59.4B</td><td class="n c-fed">+2.4%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+7.9%</td><td class="n c-com">+8.6%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Software Licensing & SaaS</td><td class="n c-fed">$52.3B</td><td class="n c-fed">+7.3%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+9.3%</td><td class="n c-com">+10.2%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Cybersecurity (SOC, zero trust, CDM, SIEM)</td><td class="n c-fed">$39.6B</td><td class="n c-fed">+11.8%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+6.3%</td><td class="n c-com">+9.1%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+<tr><td>Cloud & Data Center</td><td class="n c-fed">$24.8B</td><td class="n c-fed">+0.2%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+15.4%</td><td class="n c-com">+2.0%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Network Infrastructure</td><td class="n c-fed">$13.3B</td><td class="n c-fed">+12.1%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+6.3%</td><td class="n c-com">+9.1%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-l">L</span></td></tr>
+<tr><td>Health IT & EHR</td><td class="n c-fed">$7.5B</td><td class="n c-fed">-7.2%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+6.3%</td><td class="n c-com">+9.1%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+<tr><td>Application Development (DevSecOps)</td><td class="n c-fed">$5.7B</td><td class="n c-fed">-17.1%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+9.4%</td><td class="n c-com">+8.3%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Help Desk & Managed Services</td><td class="n c-fed">$4.1B</td><td class="n c-fed">-17.5%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+9.5%</td><td class="n c-com">+5.9%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+</table>
+<p style="font-size:.78em;color:var(--dim);margin-top:8px"><strong>See <a href="#" onclick="document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn')[4].classList.add('active');document.getElementById('tab-params').classList.add('active');window.scrollTo(0,0);return false;" style="color:var(--accent)">Parameters &amp; Methods &raquo; Confidence and Signal Definitions</a></strong> for detailed criteria. <strong>Notable divergence:</strong> Cloud Federal is STABLE and Commercial Addressable is also STABLE &mdash; hyperscaler (AWS/Azure/GCP) dominance captures Full market growth, leaving &lt;$75M firms with flat share.</p>
+</div></details>
 
 <details><summary>Commercial Analogue & Durability</summary><div class="dbody">
 <p style="margin-bottom:8px"><strong>Commercial:</strong> Enormous. Every company needs IT services. The commercial IT services market is orders of magnitude larger than Federal. MSPs, MSSPs, cloud migration consultancies, and cybersecurity firms exist in every metro area.</p>
-<p style="margin-bottom:8px"><strong>Commercial Market:</strong> $64-70B (managed services), +10.5-11% CAGR. 4,818 firms in $5M-$25M range (Census SUSB 2022).</p>
+<p style="margin-bottom:8px"><strong>Commercial Market:</strong> $1.6T total IT services, $253B addressable ($5-75M firms). 15,890 firms in $5M-$75M range (Census SUSB 2022). Forward +3-6% core, +15-25% cyber per 10-K guidance.</p>
 <p><strong>Durability:</strong> <span class="tag th">Very High</span> IT modernization and cybersecurity are permanent requirements that accelerate, never contract. Zero trust mandates, cloud migration, and AI/ML integration ensure sustained demand.</p>
 </div></details>
 
@@ -284,7 +378,7 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 
 <details><summary>Screening Criteria</summary><div class="dbody">
 <table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr>
-<tr><td>Revenue</td><td>$8M-$25M</td><td>$12M+</td></tr>
+<tr><td>Revenue</td><td>$5M-$75M</td><td>$10M-$50M sweet spot</td></tr>
 <tr><td>Revenue model</td><td>&ge;50% recurring/MRR</td><td>&ge;70% recurring</td></tr>
 <tr><td>GC-connectable</td><td>&ge;25% IT/cyber/cloud</td><td>Higher % = easier integration</td></tr>
 <tr><td>Geography</td><td>Continental US; prefer VA/MD/DC, TX, FL, AL</td><td>Within 2hrs of Federal hub</td></tr>
@@ -312,127 +406,276 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 
 <!-- SECTOR 2: FACILITIES -->
 <div id="sub-s2" class="sub-panel">
+<div class="sm-group-label">Federal</div>
 <div class="sm-row">
-<div class="sm"><div class="sv">$104B</div><div class="sl">Federal Market (FY22-26)</div></div>
-<div class="sm"><div class="sv pos">+2.0%</div><div class="sl">Addressable CAGR</div></div>
-<div class="sm"><div class="sv">9,578</div><div class="sl">Target Firms (Census)</div></div>
-<div class="sm"><div class="sv">354,664</div><div class="sl">Contract Count</div></div>
-<div class="sm"><div class="sv">1,583</div><div class="sl">Pipeline Opps</div></div>
-<div class="sm"><div class="sv">32%</div><div class="sl">Small Business by $</div></div>
-<div class="sm"><div class="sv">$138M</div><div class="sl">GC Contracts (FY22-25)</div></div>
+<div class="sm s-fed"><div class="sv">$104B <span class="conf conf-h">H</span></div><div class="sl">Federal Market (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">$200B <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. Market (&lt;$250M)</div></div>
+<div class="sm s-fed"><div class="sv pos">+2.0% <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. CAGR</div></div>
+<div class="sm s-fed"><div class="sv">$143M <span class="conf conf-h">H</span></div><div class="sl">GC Fed Contracts (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">1,583 <span class="conf conf-h">H</span></div><div class="sl">Fed Pipeline Opps</div></div>
+<div class="sm s-fed"><div class="sv">46% <span class="conf conf-h">H</span></div><div class="sl">Fed SB Set-Aside</div></div>
+<div class="sm s-fed"><div class="sv">&rarr; Steady</div><div class="sl">Fed Forward Momentum</div></div>
 </div>
-<p class="sdesc"><strong>Top Agencies:</strong> DOD (53.9%), DHS (10.9%), VA (6.7%) | <strong>Top States:</strong> Virginia ($26B), Texas ($26B), Maryland ($19B), California ($17B), Florida ($13B)</p>
-<details open><summary>Sub-segments</summary><div class="dbody"><table><tr><th>Sub-segment</th><th class="n">$</th><th class="n">Addr. CAGR</th><th>Signal</th></tr>
-<tr><td>Facilities O&M (HVAC, electrical, mechanical)</td><td class="n">$83.9B</td><td class="n">+6.3%</td><td><span class="sig sig-warm">WARM</span></td></tr><tr><td>Base Operations / Installation Support</td><td class="n">$10.5B</td><td class="n">+2.1%</td><td><span class="sig sig-stable">STABLE</span></td></tr><tr><td>Construction & Renovation</td><td class="n">$6.4B</td><td class="n">-1.5%</td><td><span class="sig sig-stable">STABLE</span></td></tr><tr><td>A&E Design</td><td class="n">$4.2B</td><td class="n">+24.8%</td><td><span class="sig sig-warm">WARM</span></td></tr><tr><td>Janitorial & Grounds</td><td class="n">$2.7B</td><td class="n">-19.9%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td><em>Track A NAICS (construction, electrical, plumbing)</em></td><td class="n"><em>~$158B</em></td><td class="n"><em>-0.2%</em></td><td><span class="sig sig-stable">STABLE</span></td></tr></table></div></details>
-<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $283-300B US market, 6.0% CAGR. CBRE, JLL, ABM at top; thousands of regional firms. 9,578 firms in $5-25M range (Census). Most fragmented &mdash; easiest acquisition landscape.</p><p><strong>Durability:</strong> <span class="tag th">Very High</span> Buildings always need maintenance. Military bases are permanent. Federal real property portfolio is aging.</p></div></details>
+<div class="sm-group-label">Commercial</div>
+<div class="sm-row">
+<div class="sm s-com"><div class="sv">$1,912B <span class="conf conf-h">H</span></div><div class="sl">Commercial Full Mkt (2022)</div></div>
+<div class="sm s-com"><div class="sv pos">+7.0% <span class="conf conf-h">H</span></div><div class="sl">Commercial Full CAGR (5yr)</div></div>
+<div class="sm s-com"><div class="sv">$634B <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. Mkt ($5-75M)</div></div>
+<div class="sm s-com"><div class="sv pos">+6.2% <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. CAGR</div></div>
+<div class="sm s-com"><div class="sv">&rarr; Steady</div><div class="sl">Forward Momentum</div></div>
+</div>
+<div class="sm-group-label">Shared</div>
+<div class="sm-row">
+<div class="sm s-shared"><div class="sv">43,285 <span class="conf conf-h">H</span></div><div class="sl">Target Firms ($5-75M, Census)</div></div>
+</div>
+<p class="sdesc"><strong>Top Agencies (Federal):</strong> DOD (53.9%), DHS (10.9%), VA (6.7%) | <strong>Top States (Federal):</strong> Virginia ($26B), Texas ($26B), Maryland ($19B), California ($17B), Florida ($13B)</p>
+<p class="sdesc" style="font-size:.82em;margin-top:6px"><strong>Commercial sourcing:</strong> Census SUSB 2017 &amp; 2022 (Tier 1, High conf); 11 facility NAICS (236220, 238210/220/290/990, 541310/330, 561210/720/730, 811310). <strong>Layer 3 forward view:</strong> ABM FY25 revenue $8B+, +4.8% organic growth, US facility services market $366B (SRC-110); EMCOR + Comfort Systems peers strong in nonresidential (SRC-111/112); KBR + Jacobs federal-heavy (SRC-113/114). Janitorial & Grounds (+11% Addr) and HVAC (+8% Addr) leading sub-segments.</p>
+<details open><summary>Sub-segments &mdash; Federal + Commercial</summary><div class="dbody">
+<table class="split">
+<tr><th rowspan="2">Sub-segment</th><th colspan="4" class="h-fed" style="text-align:center">Federal</th><th colspan="4" class="h-com c-div" style="text-align:center">Commercial</th></tr>
+<tr><th class="n h-fed">$ (FY22-26)</th><th class="n h-fed">Addr. CAGR</th><th class="h-fed">Signal</th><th class="h-fed">Conf</th><th class="n h-com c-div">Full CAGR</th><th class="n h-com">Addr. CAGR</th><th class="h-com">Signal</th><th class="h-com">Conf</th></tr>
+<tr><td>Facilities O&M (HVAC, electrical, mechanical)</td><td class="n c-fed">$83.9B</td><td class="n c-fed">+6.3%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+7.9%</td><td class="n c-com">+7.9%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Base Operations / Installation Support</td><td class="n c-fed">$10.5B</td><td class="n c-fed">+2.1%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+5.8%</td><td class="n c-com">-1.2%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Construction & Renovation</td><td class="n c-fed">$6.4B</td><td class="n c-fed">-1.5%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+6.7%</td><td class="n c-com">+4.7%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>A&E Design</td><td class="n c-fed">$4.2B</td><td class="n c-fed">+24.8%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+5.7%</td><td class="n c-com">+4.8%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Janitorial & Grounds</td><td class="n c-fed">$2.7B</td><td class="n c-fed">-19.9%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+8.7%</td><td class="n c-com">+11.2%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Electrical Contractors</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+7.6%</td><td class="n c-com">+6.6%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+</table>
+<p style="font-size:.78em;color:var(--dim);margin-top:8px"><strong>Notable divergence:</strong> Federal Janitorial & Grounds is COOL (-19.9% as Federal contracts consolidate) but Commercial Addressable is WARM (+11.2%) &mdash; huge commercial opportunity in mid-market cleaning/landscaping that a GC acquisition target would capture. Similarly A&E Design: Federal +24.8% is a post-COVID rebound; commercial trajectory is more moderate at +4.8%.</p>
+</div></details>
+<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $1.9T total facilities market, $634B addressable ($5-75M firms). CBRE, JLL, ABM at top; thousands of regional firms. 43,285 firms in $5-75M range (Census). Most fragmented &mdash; easiest acquisition landscape.</p><p><strong>Durability:</strong> <span class="tag th">Very High</span> Buildings always need maintenance. Military bases are permanent. Federal real property portfolio is aging.</p></div></details>
 <div class="arch-block"><h4>"Meet Summit Base Services"</h4><p class="story">A 20-year-old commercial facilities maintenance and HVAC company based in Killeen, TX (adjacent to Fort Cavazos). $11M revenue. 120 employees, mostly field technicians.</p><p class="story"><strong>Revenue mix:</strong> 60% commercial (property management, retail chains, office complexes), 25% state/local, 15% Federal subcontracting.</p><p class="story"><strong>What they do:</strong> HVAC installation/maintenance, plumbing, electrical, janitorial, grounds keeping. 24/7 emergency dispatch. 40+ commercial properties managed.</p></div>
-<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$20M</td><td>$10M+</td></tr><tr><td>Revenue model</td><td>Recurring maintenance contracts</td><td>&ge;50% recurring</td></tr><tr><td>GC-connectable</td><td>&ge;25% facilities/HVAC/mechanical</td><td>Existing Federal sub work</td></tr><tr><td>Geography</td><td>Near military installation or Federal campus</td><td>TX, VA, FL, NC, WA, CA</td></tr><tr><td>Employees</td><td>50-250</td><td>Multi-state licensed</td></tr><tr><td>Licenses</td><td>State contractor license, HVAC certs</td><td>OSHA, journeyman credentials</td></tr></table></div></details>
+<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$75M</td><td>$10M-$50M sweet spot</td></tr><tr><td>Revenue model</td><td>Recurring maintenance contracts</td><td>&ge;50% recurring</td></tr><tr><td>GC-connectable</td><td>&ge;25% facilities/HVAC/mechanical</td><td>Existing Federal sub work</td></tr><tr><td>Geography</td><td>Near military installation or Federal campus</td><td>TX, VA, FL, NC, WA, CA</td></tr><tr><td>Employees</td><td>50-250</td><td>Multi-state licensed</td></tr><tr><td>Licenses</td><td>State contractor license, HVAC certs</td><td>OSHA, journeyman credentials</td></tr></table></div></details>
 <details><summary>Why GC Buys This</summary><div class="dbody"><ul class="bullets"><li><strong>Immediate commercial base:</strong> Property mgmt contracts are multi-year, sticky</li><li><strong>Federal bridge:</strong> GC does DOD base ops (Army $503M, Navy $149M) &mdash; same HVAC, plumbing, electrical</li><li><strong>Geographic wedge:</strong> Near-base companies have built-in installation relationships</li><li><strong>Scale play:</strong> GC's Federal vehicles (GSA, IDIQ) open national opportunities</li></ul></div></details>
 <details><summary>Risk Factors</summary><div class="dbody"><ul class="bullets risk-list"><li><strong>Labor market:</strong> Field technicians hard to recruit &mdash; check turnover, wages</li><li><strong>Seasonality:</strong> HVAC seasonal in some markets (less concern TX/FL)</li><li><strong>Insurance/liability:</strong> Significant exposure &mdash; review claims history</li><li><strong>Davis-Bacon:</strong> Federal work requires prevailing wages</li></ul></div></details>
 </div>
 
 <!-- SECTOR 3: ENVIRONMENTAL -->
 <div id="sub-s3" class="sub-panel">
+<div class="sm-group-label">Federal</div>
 <div class="sm-row">
-<div class="sm"><div class="sv">$24B</div><div class="sl">Federal Market (FY22-26)</div></div>
-<div class="sm"><div class="sv pos">+5.5%</div><div class="sl">Addressable CAGR</div></div>
-<div class="sm"><div class="sv">1,131</div><div class="sl">Target Firms (Census)</div></div>
-<div class="sm"><div class="sv">65,383</div><div class="sl">Contract Count</div></div>
-<div class="sm"><div class="sv">116</div><div class="sl">Pipeline Opps</div></div>
-<div class="sm"><div class="sv">33%</div><div class="sl">Small Business by $</div></div>
-<div class="sm"><div class="sv">$69M</div><div class="sl">GC Contracts (FY22-25)</div></div>
+<div class="sm s-fed"><div class="sv">$24B <span class="conf conf-h">H</span></div><div class="sl">Federal Market (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">$19B <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. Market (&lt;$250M)</div></div>
+<div class="sm s-fed"><div class="sv pos">+5.5% <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. CAGR</div></div>
+<div class="sm s-fed"><div class="sv">$69M <span class="conf conf-h">H</span></div><div class="sl">GC Fed Contracts (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">116 <span class="conf conf-h">H</span></div><div class="sl">Fed Pipeline Opps</div></div>
+<div class="sm s-fed"><div class="sv">57% <span class="conf conf-h">H</span></div><div class="sl">Fed SB Set-Aside</div></div>
+<div class="sm s-fed"><div class="sv pos">&uarr; Accelerating</div><div class="sl">Fed Forward Momentum</div></div>
 </div>
-<p class="sdesc"><strong>Top Agencies:</strong> DOD (31.8%), NASA (15.4%), EPA (10.5%), GSA (9.0%) | <strong>Top States:</strong> Washington ($3.4B &mdash; Hanford), South Carolina ($1.0B &mdash; SRS), DC ($1.7B)</p>
-<details open><summary>Sub-segments</summary><div class="dbody"><table><tr><th>Sub-segment</th><th class="n">$</th><th class="n">Addr. CAGR</th><th>Signal</th></tr><tr><td>Environmental Remediation (PFAS, Superfund, brownfield)</td><td class="n">$6.8B</td><td class="n">-14.5%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td>Energy Performance / ESPC</td><td class="n">$4.0B</td><td class="n">+14.1%</td><td><span class="sig sig-warm">WARM</span></td></tr><tr><td>Renewables & EV Charging</td><td class="n">$1.5B</td><td class="n">-14.5%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td><em>Track A NAICS</em></td><td class="n"><em>~$12.2B</em></td><td class="n"><em>+14.1%</em></td><td><span class="sig sig-warm">WARM</span></td></tr></table></div></details>
-<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $22B remediation market, 6.5% CAGR. Most fragmented sector (top 5 hold 10-17%). 1,131 firms in $5-25M range.</p><p><strong>Durability:</strong> <span class="tag th">Exceptional</span> PFAS contamination at 700+ DOD sites. EPA regulations tighten continuously. Multi-decade, multi-hundred-billion-dollar market. Regulatory-driven, non-cyclical. The definition of "warm not hot."</p></div></details>
+<div class="sm-group-label">Commercial</div>
+<div class="sm-row">
+<div class="sm s-com"><div class="sv">$177B <span class="conf conf-h">H</span></div><div class="sl">Commercial Full Mkt (2022)</div></div>
+<div class="sm s-com"><div class="sv pos">+8.0% <span class="conf conf-h">H</span></div><div class="sl">Commercial Full CAGR (5yr)</div></div>
+<div class="sm s-com"><div class="sv">$45B <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. Mkt ($5-75M)</div></div>
+<div class="sm s-com"><div class="sv pos">+6.3% <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. CAGR</div></div>
+<div class="sm s-com"><div class="sv pos">&uarr; Accelerating</div><div class="sl">Forward Momentum</div></div>
+</div>
+<div class="sm-group-label">Shared</div>
+<div class="sm-row">
+<div class="sm s-shared"><div class="sv">3,338 <span class="conf conf-h">H</span></div><div class="sl">Target Firms ($5-75M, Census)</div></div>
+</div>
+<p class="sdesc"><strong>Top Agencies (Federal):</strong> DOD (31.8%), NASA (15.4%), EPA (10.5%), GSA (9.0%) | <strong>Top States (Federal):</strong> Washington ($3.4B &mdash; Hanford), South Carolina ($1.0B &mdash; SRS), DC ($1.7B)</p>
+<p class="sdesc" style="font-size:.82em;margin-top:6px"><strong>Commercial sourcing:</strong> Census SUSB 2017 &amp; 2022 (Tier 1, High conf); 7 env/energy NAICS (221114/115/118, 541620/690, 562910/111). <strong>Layer 3 forward view:</strong> Env Remediation market +8.2% CAGR 2025-2030 (MarketsandMarkets); Montrose on $1.5B USAF MATOC including PFAS (SRC-122); Clean Harbors acquisitions Sep 2025 (SRC-120); Tetra Tech Federal leader (SRC-121); Ameresco ESPC + renewables (SRC-123). PFAS + EPA regulatory tailwind. Renewables sub-segment exploding (+19.6% Addr CAGR).</p>
+<details open><summary>Sub-segments &mdash; Federal + Commercial</summary><div class="dbody">
+<table class="split">
+<tr><th rowspan="2">Sub-segment</th><th colspan="4" class="h-fed" style="text-align:center">Federal</th><th colspan="4" class="h-com c-div" style="text-align:center">Commercial</th></tr>
+<tr><th class="n h-fed">$ (FY22-26)</th><th class="n h-fed">Addr. CAGR</th><th class="h-fed">Signal</th><th class="h-fed">Conf</th><th class="n h-com c-div">Full CAGR</th><th class="n h-com">Addr. CAGR</th><th class="h-com">Signal</th><th class="h-com">Conf</th></tr>
+<tr><td>Environmental Remediation (PFAS, Superfund)</td><td class="n c-fed">$6.8B</td><td class="n c-fed">-14.5%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+7.7%</td><td class="n c-com">+5.8%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Energy Performance / ESPC</td><td class="n c-fed">$4.0B</td><td class="n c-fed">+14.1%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+5.9%</td><td class="n c-com">+4.6%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+<tr><td>Renewables & EV Charging</td><td class="n c-fed">$1.5B</td><td class="n c-fed">-14.5%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+15.3%</td><td class="n c-com">+19.6%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Env Consulting</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+7.6%</td><td class="n c-com">+4.9%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Waste Management</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+5.7%</td><td class="n c-com">+3.9%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+</table>
+<p style="font-size:.78em;color:var(--dim);margin-top:8px"><strong>Notable signals:</strong> Federal Renewables is COOL (-14.5%, IRA uncertainty) but Commercial Renewables Addressable is strongly WARM (+19.6%) &mdash; massive commercial solar/wind tailwind captured by $5-75M installers and developers. Federal Remediation COOL reflects consolidation onto primes; Commercial Remediation WARM (+5.8%) says mid-market has real demand. Acquisition thesis is stronger on commercial side.</p>
+</div></details>
+<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $177B total env/energy market, $45B addressable ($5-75M firms). Most fragmented sector (top 5 hold 10-17%). 3,338 firms in $5-75M range (Census).</p><p><strong>Durability:</strong> <span class="tag th">Exceptional</span> PFAS contamination at 700+ DOD sites. EPA regulations tighten continuously. Multi-decade, multi-hundred-billion-dollar market. Regulatory-driven, non-cyclical. The definition of "warm not hot."</p></div></details>
 <div class="arch-block"><h4>"Meet CleanPath Environmental"</h4><p class="story">A 15-year-old environmental remediation firm based in Colorado Springs, CO. $9M revenue. 55 employees (environmental engineers, geologists, PMs, field techs).</p><p class="story"><strong>Revenue mix:</strong> 45% commercial (industrial cleanup, brownfield assessments, PFAS water testing), 30% state/local, 25% Federal subcontracting (PFAS at Peterson SFB/Fort Carson).</p><p class="story"><strong>What they do:</strong> PFAS investigation/remediation, soil/groundwater sampling, environmental consulting, Phase I/II assessments, ESPC feasibility. Four licensed PEs.</p></div>
-<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$20M</td><td>$8M+</td></tr><tr><td>Services</td><td>Remediation, site assessment, OR energy services</td><td>PFAS experience</td></tr><tr><td>GC-connectable</td><td>&ge;25% environmental/energy</td><td>Existing Federal/DOD sub work</td></tr><tr><td>Geography</td><td>Near DOD installations w/ known contamination</td><td>CO, WA, SC, NJ, TX, CA</td></tr><tr><td>Credentials</td><td>State environmental certifications</td><td>Licensed PEs, PGs</td></tr></table></div></details>
+<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$75M</td><td>$8M-$40M sweet spot (remediation is mid-market heavy)</td></tr><tr><td>Services</td><td>Remediation, site assessment, OR energy services</td><td>PFAS experience</td></tr><tr><td>GC-connectable</td><td>&ge;25% environmental/energy</td><td>Existing Federal/DOD sub work</td></tr><tr><td>Geography</td><td>Near DOD installations w/ known contamination</td><td>CO, WA, SC, NJ, TX, CA</td></tr><tr><td>Credentials</td><td>State environmental certifications</td><td>Licensed PEs, PGs</td></tr></table></div></details>
 <details><summary>Why GC Buys This</summary><div class="dbody"><ul class="bullets"><li><strong>Exceptional durability:</strong> PFAS at 700+ DOD installations, decades of work</li><li><strong>Federal bridge:</strong> GC has E&E as capability #2; DOD/NASA/EPA/GSA spending +5.5% addressable CAGR</li><li><strong>Commercial diversification gold:</strong> Real estate, manufacturers, water utilities need environmental services regardless of Federal budgets</li><li><strong>Regulatory tailwind:</strong> State PFAS regulations expanding independently of Federal policy</li></ul></div></details>
 <details><summary>Risk Factors</summary><div class="dbody"><ul class="bullets risk-list"><li><strong>Professional liability:</strong> Significant E&O and pollution liability exposure</li><li><strong>Key personnel:</strong> Licensed PEs/PGs ARE the credentials &mdash; if they leave, firm may lose certs</li><li><strong>Regulatory risk (upside):</strong> If PFAS regulations weakened (unlikely), demand could slow</li><li><strong>Project-based revenue:</strong> Some remediation is project-based, not recurring &mdash; check backlog</li></ul></div></details>
 </div>
 
 <!-- SECTOR 4: FINANCIAL -->
 <div id="sub-s4" class="sub-panel">
+<div class="sm-group-label">Federal</div>
 <div class="sm-row">
-<div class="sm"><div class="sv">$10B</div><div class="sl">Federal Market (FY22-26)</div></div>
-<div class="sm"><div class="sv neg">-4.6%</div><div class="sl">Sector Addressable CAGR</div></div>
-<div class="sm"><div class="sv pos">+23.0%</div><div class="sl">Audit Sub-Segment CAGR</div></div>
-<div class="sm"><div class="sv">17,338</div><div class="sl">Contract Count</div></div>
-<div class="sm"><div class="sv">4,917</div><div class="sl">Target Firms (Census)</div></div>
-<div class="sm"><div class="sv">322</div><div class="sl">Pipeline Opps (Govwin)</div></div>
-<div class="sm"><div class="sv">$152M</div><div class="sl">GC Contracts (FY22-25)</div></div>
+<div class="sm s-fed"><div class="sv">$10B <span class="conf conf-h">H</span></div><div class="sl">Federal Market (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">$16B <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. Market (&lt;$250M)</div></div>
+<div class="sm s-fed"><div class="sv neg">-4.6% <span class="conf conf-h">H</span></div><div class="sl">Fed Sector Addr. CAGR</div></div>
+<div class="sm s-fed"><div class="sv">$152M <span class="conf conf-h">H</span></div><div class="sl">GC Fed Contracts (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">322 <span class="conf conf-h">H</span></div><div class="sl">Fed Pipeline Opps</div></div>
+<div class="sm s-fed"><div class="sv">53% <span class="conf conf-h">H</span></div><div class="sl">Fed SB Set-Aside</div></div>
+<div class="sm s-fed"><div class="sv pos">&uarr; Accelerating</div><div class="sl">Fed Forward Momentum</div></div>
 </div>
-<p class="sdesc"><strong>Top Agencies:</strong> DOD (42.2%), HHS (13.1%), Education (7.9%), VA (6.1%) | <strong>Top States:</strong> Virginia ($8.2B &mdash; 44%), DC ($5.1B &mdash; 27%), Maryland ($1.7B)</p>
-<details open><summary>Sub-segments</summary><div class="dbody"><table><tr><th>Sub-segment</th><th class="n">$</th><th class="n">Addr. CAGR</th><th>Signal</th></tr><tr><td>Financial General (ERP, analytics, reporting)</td><td class="n">$8.9B</td><td class="n">-2.5%</td><td><span class="sig sig-stable">STABLE</span></td></tr><tr><td>Audit (financial statement, FIAR)</td><td class="n">$1.4B</td><td class="n">+23.0%</td><td><span class="sig sig-warm">WARM</span></td></tr><tr><td>Fraud & Improper Payment</td><td class="n">$0.3B</td><td class="n">-7.8%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td><em>Track A NAICS (CPA, accounting)</em></td><td class="n"><em>~$8.1B</em></td><td class="n"><em>-12.8%</em></td><td><span class="sig sig-cool">COOL</span></td></tr></table></div></details>
-<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $145B accounting market, $50B ERP consulting. 4.5-7.8% CAGR. 4,917 firms in $5-25M range. ERP sub-segment most relevant to GC.</p><p><strong>Durability:</strong> <span class="tag th">High</span> Financial reporting and audit are permanent. FIAR is a DOD mandate generating recurring work. ERP modernization wave ongoing.</p></div></details>
+<div class="sm-group-label">Commercial</div>
+<div class="sm-row">
+<div class="sm s-com"><div class="sv">$556B <span class="conf conf-h">H</span></div><div class="sl">Commercial Full Mkt (2022)</div></div>
+<div class="sm s-com"><div class="sv pos">+11.4% <span class="conf conf-h">H</span></div><div class="sl">Commercial Full CAGR (5yr)</div></div>
+<div class="sm s-com"><div class="sv">$41B <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. Mkt ($5-75M)</div></div>
+<div class="sm s-com"><div class="sv pos">+5.0% <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. CAGR</div></div>
+<div class="sm s-com"><div class="sv pos">&uarr; Accelerating</div><div class="sl">Forward Momentum</div></div>
+</div>
+<div class="sm-group-label">Shared</div>
+<div class="sm-row">
+<div class="sm s-shared"><div class="sv">3,298 <span class="conf conf-h">H</span></div><div class="sl">Target Firms ($5-75M, Census)</div></div>
+</div>
+<p class="sdesc"><strong>Top Agencies (Federal):</strong> DOD (42.2%), HHS (13.1%), Education (7.9%), VA (6.1%) | <strong>Top States (Federal):</strong> Virginia ($8.2B &mdash; 44%), DC ($5.1B &mdash; 27%), Maryland ($1.7B)</p>
+<p class="sdesc" style="font-size:.82em;margin-top:6px"><strong>Commercial sourcing:</strong> Census SUSB 2017 &amp; 2022 (Tier 1, High conf); 5 financial NAICS (541211/213/214/219, 524292). <strong>Layer 3 forward view:</strong> Booz Allen FY25 $12B +12.4%, AI business +30% to $800M, $37B backlog (+15%) (SRC-132); Huron FY25 RBR +12% (5th consecutive year), EPS +21% (SRC-130); FAR reform + fixed-price contracts + AI integration driving federal growth. Commercial Tax Prep (+15.9% Addr) and Audit (+5.2% Addr) leading sub-segments.</p>
+<details open><summary>Sub-segments &mdash; Federal + Commercial</summary><div class="dbody">
+<table class="split">
+<tr><th rowspan="2">Sub-segment</th><th colspan="4" class="h-fed" style="text-align:center">Federal</th><th colspan="4" class="h-com c-div" style="text-align:center">Commercial</th></tr>
+<tr><th class="n h-fed">$ (FY22-26)</th><th class="n h-fed">Addr. CAGR</th><th class="h-fed">Signal</th><th class="h-fed">Conf</th><th class="n h-com c-div">Full CAGR</th><th class="n h-com">Addr. CAGR</th><th class="h-com">Signal</th><th class="h-com">Conf</th></tr>
+<tr><td>Audit (financial statement, FIAR)</td><td class="n c-fed">$1.4B</td><td class="n c-fed">+23.0%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+8.0%</td><td class="n c-com">+5.2%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Financial General (ERP, analytics, reporting)</td><td class="n c-fed">$8.9B</td><td class="n c-fed">-2.5%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+7.3%</td><td class="n c-com">+7.9%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Fraud & Improper Payment</td><td class="n c-fed">$0.3B</td><td class="n c-fed">-7.8%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+7.3%</td><td class="n c-com">+7.9%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+<tr><td>Tax Preparation</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+2.3%</td><td class="n c-com">+15.9%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Payroll Services</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+4.0%</td><td class="n c-com">+4.4%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Claims Processing</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+14.7%</td><td class="n c-com">+2.5%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+</table>
+<p style="font-size:.78em;color:var(--dim);margin-top:8px"><strong>Notable signals:</strong> Federal Audit +23% reflects FIAR mandate tailwind (specific to DOD financial audit readiness); commercial Audit is +5.2% (steady). Tax Prep shows unusual divergence: Full CAGR only +2.3% (market consolidating to H&amp;R Block/Intuit) but Addressable +15.9% &mdash; mid-market boutique tax firms gaining share. Financial General is WARM commercially (+7.9%), supporting the ERP/analytics acquisition thesis.</p>
+</div></details>
+<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $556B total financial services, $41B addressable ($5-75M firms). 3,298 firms in $5-75M range (Census). ERP sub-segment most relevant to GC.</p><p><strong>Durability:</strong> <span class="tag th">High</span> Financial reporting and audit are permanent. FIAR is a DOD mandate generating recurring work. ERP modernization wave ongoing.</p></div></details>
 <div class="arch-block"><h4>"Meet Clearview Financial Partners"</h4><p class="story">A 10-year-old financial consulting and ERP firm based in Arlington, VA. $8M revenue. 45 employees (CPAs, analysts, ERP consultants, data engineers).</p><p class="story"><strong>Revenue mix:</strong> 55% commercial (Oracle/SAP ERP implementations, outsourced CFO, analytics), 30% Federal subcontracting (FIAR, HHS reporting), 15% state/local.</p><p class="story"><strong>What they do:</strong> Oracle/SAP ERP implementation, financial statements, data analytics (Power BI, Tableau), cost allocation, internal controls. Strong CPA and CISA bench.</p></div>
-<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$15M</td><td>$7M+</td></tr><tr><td>Services</td><td>Financial consulting, ERP, OR audit/compliance</td><td>Oracle or SAP expertise</td></tr><tr><td>Geography</td><td>DC metro strongly preferred</td><td>Arlington, McLean, Reston, Bethesda</td></tr><tr><td>Employees</td><td>25-80</td><td>CPAs, CISAs, EVM-certified</td></tr><tr><td>ERP platforms</td><td>Oracle, SAP, Workday, or OneStream</td><td>Oracle Cloud specifically</td></tr></table></div></details>
+<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$75M</td><td>$7M-$30M sweet spot (financial consulting runs thin)</td></tr><tr><td>Services</td><td>Financial consulting, ERP, OR audit/compliance</td><td>Oracle or SAP expertise</td></tr><tr><td>Geography</td><td>DC metro strongly preferred</td><td>Arlington, McLean, Reston, Bethesda</td></tr><tr><td>Employees</td><td>25-80</td><td>CPAs, CISAs, EVM-certified</td></tr><tr><td>ERP platforms</td><td>Oracle, SAP, Workday, or OneStream</td><td>Oracle Cloud specifically</td></tr></table></div></details>
 <details><summary>Why GC Buys This</summary><div class="dbody"><ul class="bullets"><li><strong>Direct GC overlap:</strong> Treasury BFS runs on Oracle/OneStream &mdash; an Oracle shop plugs directly in</li><li><strong>DC concentration:</strong> 80%+ of Federal financial work in DC metro. Single acquisition = concentrated capability</li><li><strong>Commercial ERP demand:</strong> Every mid-market company upgrading legacy financials needs implementation help</li><li><strong>Credential arbitrage:</strong> CPAs and CISAs serve both commercial audit and Federal FIAR</li></ul></div></details>
 <details><summary>Risk Factors</summary><div class="dbody"><ul class="bullets risk-list"><li><strong>ERP platform shifts:</strong> Cloud-native platforms could reduce Oracle/SAP demand</li><li><strong>DC salary pressure:</strong> Premium salaries in Arlington/McLean &mdash; check margins</li><li><strong>Prime dependency:</strong> If 30% of revenue through one prime, that's concentration risk</li><li><strong>Talent poaching:</strong> Big 4 and large consultancies aggressively recruit this talent pool</li></ul></div></details>
 </div>
 
 <!-- SECTOR 5: HEALTH IT -->
 <div id="sub-s5" class="sub-panel">
+<div class="sm-group-label">Federal</div>
 <div class="sm-row">
-<div class="sm"><div class="sv">$24B</div><div class="sl">Federal Market (FY22-26)</div></div>
-<div class="sm"><div class="sv neg">-14.5%</div><div class="sl">Addressable CAGR</div></div>
-<div class="sm"><div class="sv pos">+13.9%</div><div class="sl">Commercial HIT CAGR</div></div>
-<div class="sm"><div class="sv">23,195</div><div class="sl">Contract Count</div></div>
-<div class="sm"><div class="sv">2,633</div><div class="sl">Target Firms (Census)</div></div>
-<div class="sm"><div class="sv">133</div><div class="sl">Pipeline Opps</div></div>
-<div class="sm"><div class="sv">$204M</div><div class="sl">GC Contracts (FY22-25)</div></div>
+<div class="sm s-fed"><div class="sv">$24B <span class="conf conf-h">H</span></div><div class="sl">Federal Market (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">$20B <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. Market (&lt;$250M)</div></div>
+<div class="sm s-fed"><div class="sv neg">-14.5% <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. CAGR</div></div>
+<div class="sm s-fed"><div class="sv">$204M <span class="conf conf-h">H</span></div><div class="sl">GC Fed Contracts (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">133 <span class="conf conf-h">H</span></div><div class="sl">Fed Pipeline Opps</div></div>
+<div class="sm s-fed"><div class="sv">40% <span class="conf conf-h">H</span></div><div class="sl">Fed SB Set-Aside</div></div>
+<div class="sm s-fed"><div class="sv neg">&darr; Decelerating</div><div class="sl">Fed Forward Momentum</div></div>
 </div>
-<p class="sdesc"><strong>Top Agencies:</strong> HHS (48.4%), DOD/DHA (24.1%), VA (11.3%), USAID (10.3%) | <strong>Top States:</strong> Maryland ($7.0B &mdash; NIH), Virginia ($5.1B), DC ($2.2B)</p>
-<details open><summary>Sub-segments</summary><div class="dbody"><table><tr><th>Sub-segment</th><th class="n">$</th><th class="n">Addr. CAGR</th><th>Signal</th></tr><tr><td>Health General</td><td class="n">$12.9B</td><td class="n">-3.7%</td><td><span class="sig sig-stable">STABLE</span></td></tr><tr><td>Public Health & Disease (declining post-COVID)</td><td class="n">$6.4B</td><td class="n">-32.3%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td>Clinical & Medical Staffing</td><td class="n">$4.2B</td><td class="n">-19.5%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td>Behavioral Health</td><td class="n">$1.2B</td><td class="n">-42.4%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td>Social Services</td><td class="n">$1.3B</td><td class="n">+46.8%</td><td><span class="sig sig-warm">WARM</span></td></tr><tr><td>Health IT & EHR (from IT/Cyber sector)</td><td class="n">$7.5B</td><td class="n">-7.2%</td><td><span class="sig sig-cool">COOL</span></td></tr></table></div></details>
-<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $104B healthcare IT, +13.9% CAGR. $42.5B telehealth, +23.8% CAGR. Fastest growth of any warm zone commercially.</p><p><strong>Durability:</strong> <span class="tag th">High</span> Core clinical staffing and Health IT are durable. COVID-driven public health normalizing (driving overall decline). EHR modernization is a decade-long program. Behavioral health growing.</p></div></details>
+<div class="sm-group-label">Commercial</div>
+<div class="sm-row">
+<div class="sm s-com"><div class="sv">$2,161B <span class="conf conf-h">H</span></div><div class="sl">Commercial Full Mkt (2022)</div></div>
+<div class="sm s-com"><div class="sv pos">+5.5% <span class="conf conf-h">H</span></div><div class="sl">Commercial Full CAGR (5yr)</div></div>
+<div class="sm s-com"><div class="sv">$264B <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. Mkt ($5-75M)</div></div>
+<div class="sm s-com"><div class="sv pos">+3.5% <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. CAGR</div></div>
+<div class="sm s-com"><div class="sv pos">&uarr; Accelerating</div><div class="sl">Forward Momentum</div></div>
+</div>
+<div class="sm-group-label">Shared</div>
+<div class="sm-row">
+<div class="sm s-shared"><div class="sv">17,528 <span class="conf conf-h">H</span></div><div class="sl">Target Firms ($5-75M, Census)</div></div>
+</div>
+<p class="sdesc"><strong>Top Agencies (Federal):</strong> HHS (48.4%), DOD/DHA (24.1%), VA (11.3%), USAID (10.3%) | <strong>Top States (Federal):</strong> Maryland ($7.0B &mdash; NIH), Virginia ($5.1B), DC ($2.2B)</p>
+<p class="sdesc" style="font-size:.82em;margin-top:6px"><strong>Commercial sourcing:</strong> Census SUSB 2017 &amp; 2022 (Tier 1); 6 health NAICS (621111/498/511/999, 622110, 621610). <strong>Layer 3 forward view:</strong> Digital health market $427B 2025 &rarr; $1.5T 2032 (strong tailwind); Maximus FY25 $5.43B +2.4%, 24.6% gross margin (SRC-140); Evolent Health FY24 $2.55B +30% YoY, value-based care focus (SRC-142); Premier healthcare tech platform (SRC-141). Outpatient Care (+5.6% Addr) and Diagnostic Labs (+9.2% Addr) lead commercial growth.</p>
+<details open><summary>Sub-segments &mdash; Federal + Commercial</summary><div class="dbody">
+<table class="split">
+<tr><th rowspan="2">Sub-segment</th><th colspan="4" class="h-fed" style="text-align:center">Federal</th><th colspan="4" class="h-com c-div" style="text-align:center">Commercial</th></tr>
+<tr><th class="n h-fed">$ (FY22-26)</th><th class="n h-fed">Addr. CAGR</th><th class="h-fed">Signal</th><th class="h-fed">Conf</th><th class="n h-com c-div">Full CAGR</th><th class="n h-com">Addr. CAGR</th><th class="h-com">Signal</th><th class="h-com">Conf</th></tr>
+<tr><td>Health General</td><td class="n c-fed">$12.9B</td><td class="n c-fed">-3.7%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+5.2%</td><td class="n c-com">+2.6%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Public Health & Disease (post-COVID)</td><td class="n c-fed">$6.4B</td><td class="n c-fed">-32.3%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div"><em>n/a</em></td><td class="n c-com"><em>n/a</em></td><td class="c-com"><em>&mdash;</em></td><td class="c-com"><span class="conf conf-l">L</span></td></tr>
+<tr><td>Clinical & Medical Staffing</td><td class="n c-fed">$4.2B</td><td class="n c-fed">-19.5%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+12.8%</td><td class="n c-com">+4.4%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+<tr><td>Behavioral Health</td><td class="n c-fed">$1.2B</td><td class="n c-fed">-42.4%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+8.7%</td><td class="n c-com">+5.6%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+<tr><td>Social Services</td><td class="n c-fed">$1.3B</td><td class="n c-fed">+46.8%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+8.7%</td><td class="n c-com">+5.6%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+<tr><td>Diagnostic Labs</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+8.4%</td><td class="n c-com">+9.2%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Home Health Care</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+6.4%</td><td class="n c-com">+5.1%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Health IT & EHR (from IT/Cyber)</td><td class="n c-fed">$7.5B</td><td class="n c-fed">-7.2%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+6.3%</td><td class="n c-com">+9.1%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+</table>
+<p style="font-size:.78em;color:var(--dim);margin-top:8px"><strong>Notable signals:</strong> Federal side appears broadly COOL (post-COVID normalization) but commercial side is STABLE-to-WARM across every comparable sub-segment. Clinical Staffing Federal -19.5% but Commercial +4.4% &mdash; the decline is Federal-specific. Home Health + Diagnostic Labs both commercial WARM. Acquisition thesis is especially strong here: target a commercial-heavy health services firm to tap a $264B addressable market growing through the Federal COVID winding-down.</p>
+</div></details>
+<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $2.2T total health services, $264B addressable ($5-75M firms). 17,528 firms in $5-75M range (Census). Digital health tailwind: market projected $427B 2025 &rarr; $1.5T 2032.</p><p><strong>Durability:</strong> <span class="tag th">High</span> Core clinical staffing and Health IT are durable. COVID-driven public health normalizing (driving overall Federal decline). EHR modernization is a decade-long program. Behavioral health growing.</p></div></details>
 <div class="arch-block"><h4>"Meet Apex Health Technologies"</h4><p class="story">An 11-year-old health IT and clinical staffing company based in Rockville, MD. $12M revenue. 70 employees + ~40 contract clinical staff.</p><p class="story"><strong>Revenue mix:</strong> 50% commercial (EHR implementation for hospital systems &mdash; Cerner/Epic), 25% Federal sub (VA EHRM, DHA MHS Genesis), 25% clinical staffing.</p><p class="story"><strong>What they do:</strong> Cerner/Oracle Health and Epic EHR implementation, clinical workflow optimization, telehealth deployment, health data analytics, clinical staffing (RNs, informaticists, trainers).</p></div>
-<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$20M</td><td>$10M+</td></tr><tr><td>Services</td><td>Health IT (EHR) OR clinical staffing</td><td>Both combined</td></tr><tr><td>EHR platforms</td><td>Cerner/Oracle Health OR Epic</td><td>Both platforms</td></tr><tr><td>Geography</td><td>MD/VA/DC corridor preferred</td><td>Nashville, Boston, San Antonio</td></tr><tr><td>Certifications</td><td>HIPAA compliance program</td><td>HITRUST, SOC 2</td></tr></table></div></details>
+<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$75M</td><td>$10M-$50M sweet spot</td></tr><tr><td>Services</td><td>Health IT (EHR) OR clinical staffing</td><td>Both combined</td></tr><tr><td>EHR platforms</td><td>Cerner/Oracle Health OR Epic</td><td>Both platforms</td></tr><tr><td>Geography</td><td>MD/VA/DC corridor preferred</td><td>Nashville, Boston, San Antonio</td></tr><tr><td>Certifications</td><td>HIPAA compliance program</td><td>HITRUST, SOC 2</td></tr></table></div></details>
 <details><summary>Why GC Buys This</summary><div class="dbody"><ul class="bullets"><li><strong>Decade-long program:</strong> VA EHRM ($20B+) running through 2030s. DHA MHS Genesis similarly long-lived</li><li><strong>Commercial healthcare enormous:</strong> US healthcare IT >$200B/year, completely Federal-independent</li><li><strong>Dual-use workforce:</strong> EHR consultants deploy to commercial hospitals AND VA medical centers interchangeably</li><li><strong>Maryland location:</strong> Proximity to NIH, HHS, FDA, DHA, Walter Reed</li></ul></div></details>
 <details><summary>Risk Factors</summary><div class="dbody"><ul class="bullets risk-list"><li><strong>EHR vendor concentration:</strong> 100% Cerner + VA EHRM slowdown = need Epic too</li><li><strong>Clinical staffing margins:</strong> Low-margin, competitive &mdash; check bill vs. pay rates</li><li><strong>Credentialing timelines:</strong> Extensive background checks for Federal clinical facilities</li><li><strong>VA EHRM risk:</strong> Congressional scrutiny and delays &mdash; not existential but creates uncertainty</li></ul></div></details>
 </div>
 
 <!-- SECTOR 6: PM/ADMIN -->
 <div id="sub-s6" class="sub-panel">
+<div class="sm-group-label">Federal</div>
 <div class="sm-row">
-<div class="sm"><div class="sv">$27B</div><div class="sl">Federal PM/Admin Market (FY22-26)</div></div>
-<div class="sm"><div class="sv neg">-6.3%</div><div class="sl">Addressable CAGR</div></div>
-<div class="sm"><div class="sv">2,976</div><div class="sl">Target Firms (Census)</div></div>
-<div class="sm"><div class="sv">201,520</div><div class="sl">Contract Count</div></div>
-<div class="sm"><div class="sv">70</div><div class="sl">Pipeline Opps</div></div>
-<div class="sm"><div class="sv neg">73%</div><div class="sl">SB Set-Aside (highest)</div></div>
-<div class="sm"><div class="sv">$616M</div><div class="sl">GC Contracts (FY22-25)</div></div>
+<div class="sm s-fed"><div class="sv">$27B <span class="conf conf-h">H</span></div><div class="sl">Federal Market (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">$40B <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. Market (&lt;$250M)</div></div>
+<div class="sm s-fed"><div class="sv neg">-6.3% <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. CAGR</div></div>
+<div class="sm s-fed"><div class="sv">$618M <span class="conf conf-h">H</span></div><div class="sl">GC Fed Contracts (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">70 <span class="conf conf-h">H</span></div><div class="sl">Fed Pipeline Opps</div></div>
+<div class="sm s-fed"><div class="sv">73% <span class="conf conf-h">H</span></div><div class="sl">Fed SB Set-Aside (highest)</div></div>
+<div class="sm s-fed"><div class="sv neg">&darr; Decelerating</div><div class="sl">Fed Forward Momentum</div></div>
 </div>
-<p class="sdesc"><strong>Top Agencies:</strong> DOD (38.1%), DHS (24.4%), HHS (6.8%), Treasury (5.0%) | <strong>Top States:</strong> Texas ($11B &mdash; El Paso/CBP), Virginia ($15B), DC ($9.1B)</p>
-<details open><summary>Sub-segments</summary><div class="dbody"><table><tr><th>Sub-segment</th><th class="n">$</th><th class="n">Addr. CAGR</th><th>Signal</th></tr><tr><td>Program Management General</td><td class="n">$19.9B</td><td class="n">-7.1%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td>HR & Human Capital</td><td class="n">$4.5B</td><td class="n">-13.8%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td>Contact Center / BPO</td><td class="n">$2.9B</td><td class="n">-7.3%</td><td><span class="sig sig-cool">COOL</span></td></tr><tr><td>Records & Document Management</td><td class="n">$1.5B</td><td class="n">+3.6%</td><td><span class="sig sig-stable">STABLE</span></td></tr><tr><td>Legal & Litigation Support</td><td class="n">$0.5B</td><td class="n">+16.1%</td><td><span class="sig sig-warm">WARM</span></td></tr><tr><td><em>Track A NAICS (HR, translation, security)</em></td><td class="n"><em>~$28.9B</em></td><td class="n"><em>-5.0%</em></td><td><span class="sig sig-stable">STABLE</span></td></tr></table></div></details>
-<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $36-71B contact center/BPO market, 9-14.6% CAGR. More consolidated than other warm zones (top 50 hold ~50%). AI/automation is transforming the sector.</p><p><strong>Durability:</strong> <span class="tag tm">Medium</span> Core PM/admin recurring but subject to efficiency cuts. Contact center/BPO more durable (citizens always call). The -6.3% addressable CAGR is a concern &mdash; may reflect post-COVID normalization or efficiency pressure.</p></div></details>
+<div class="sm-group-label">Commercial</div>
+<div class="sm-row">
+<div class="sm s-com"><div class="sv">$1,062B <span class="conf conf-h">H</span></div><div class="sl">Commercial Full Mkt (2022)</div></div>
+<div class="sm s-com"><div class="sv pos">+8.6% <span class="conf conf-h">H</span></div><div class="sl">Commercial Full CAGR (5yr)</div></div>
+<div class="sm s-com"><div class="sv">$256B <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. Mkt ($5-75M)</div></div>
+<div class="sm s-com"><div class="sv pos">+5.2% <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. CAGR</div></div>
+<div class="sm s-com"><div class="sv">&rarr; Steady</div><div class="sl">Forward Momentum</div></div>
+</div>
+<div class="sm-group-label">Shared</div>
+<div class="sm-row">
+<div class="sm s-shared"><div class="sv">18,969 <span class="conf conf-h">H</span></div><div class="sl">Target Firms ($5-75M, Census)</div></div>
+</div>
+<p class="sdesc"><strong>Top Agencies (Federal):</strong> DOD (38.1%), DHS (24.4%), HHS (6.8%), Treasury (5.0%) | <strong>Top States (Federal):</strong> Texas ($11B &mdash; El Paso/CBP), Virginia ($15B), DC ($9.1B)</p>
+<p class="sdesc" style="font-size:.82em;margin-top:6px"><strong>Commercial sourcing:</strong> Census SUSB 2017 &amp; 2022 (Tier 1); 9 PM/admin NAICS (541110, 541611/612, 561110/320/421/422/439/492). <strong>Layer 3 forward view:</strong> Maximus FY25 $5.43B +2.4% (SRC-140); Booz Allen FY25 $12B +12.4%, AI +30% to $800M (SRC-132); Robert Half FY26 guidance +2-3% constant currency (SRC-145); ManpowerGroup challenged NA/EU, strong LatAm/APAC (SRC-146). Federal side COOL due to DOGE; commercial mid-single-digit STABLE.</p>
+<details open><summary>Sub-segments &mdash; Federal + Commercial</summary><div class="dbody">
+<table class="split">
+<tr><th rowspan="2">Sub-segment</th><th colspan="4" class="h-fed" style="text-align:center">Federal</th><th colspan="4" class="h-com c-div" style="text-align:center">Commercial</th></tr>
+<tr><th class="n h-fed">$ (FY22-26)</th><th class="n h-fed">Addr. CAGR</th><th class="h-fed">Signal</th><th class="h-fed">Conf</th><th class="n h-com c-div">Full CAGR</th><th class="n h-com">Addr. CAGR</th><th class="h-com">Signal</th><th class="h-com">Conf</th></tr>
+<tr><td>Program Management General</td><td class="n c-fed">$19.9B</td><td class="n c-fed">-7.1%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+9.2%</td><td class="n c-com">+7.3%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>HR & Human Capital</td><td class="n c-fed">$4.5B</td><td class="n c-fed">-13.8%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+12.4%</td><td class="n c-com">+4.6%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Contact Center / BPO</td><td class="n c-fed">$2.9B</td><td class="n c-fed">-7.3%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+10.6%</td><td class="n c-com">+0.7%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Records & Document Management</td><td class="n c-fed">$1.5B</td><td class="n c-fed">+3.6%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+0.6%</td><td class="n c-com">-3.3%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Legal & Litigation Support</td><td class="n c-fed">$0.5B</td><td class="n c-fed">+16.1%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+4.7%</td><td class="n c-com">+4.7%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-m">M</span></td></tr>
+<tr><td>Office Admin Services</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+10.9%</td><td class="n c-com">+6.0%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+</table>
+<p style="font-size:.78em;color:var(--dim);margin-top:8px"><strong>Notable signals:</strong> Program Management General flips Federal COOL (-7.1%) to Commercial WARM (+7.3%) &mdash; Federal pressure from DOGE/consolidation; commercial PM consulting demand healthy. HR Full CAGR is a very strong +12.4% but Addressable only +4.6% &mdash; big hiring/consulting firms (ADP, Workday) capturing growth, mid-market consolidating. Contact Center Full +10.6% Addr +0.7% tells same story: hyperscale BPOs winning. Acquisition-addressable PM and Office Admin are the cleanest WARM commercial signals here.</p>
+</div></details>
+<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $1.1T total PM/admin/staffing, $256B addressable ($5-75M firms). 18,969 firms in $5-75M range (Census). AI/automation transforming staffing; Contact Center Full CAGR +10.6% but Addressable only +0.7% (hyperscaler BPO consolidation).</p><p><strong>Durability:</strong> <span class="tag tm">Medium</span> Core PM/admin recurring but subject to efficiency cuts (especially Federal under DOGE). Commercial staffing demand moderating per Robert Half/ManpowerGroup FY26 guidance.</p></div></details>
 <div class="arch-block"><h4>"Meet Liberty Response Services"</h4><p class="story">A 14-year-old contact center and BPO company based in San Antonio, TX. $10M revenue. 180 employees (agents, QA supervisors, IT, management).</p><p class="story"><strong>Revenue mix:</strong> 65% commercial (insurance, utility billing, healthcare appointment scheduling), 20% state/local (TX HHSC benefits hotline, county 311), 15% Federal subcontracting (DHS overflow).</p><p class="story"><strong>What they do:</strong> Inbound/outbound contact center, bilingual EN/ES, document processing, eligibility determination, QA monitoring. 200-seat center + 50-seat DR site.</p></div>
-<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$20M</td><td>$8M+</td></tr><tr><td>Services</td><td>Contact center, BPO, OR admin services</td><td>Multilingual</td></tr><tr><td>Infrastructure</td><td>Established facility, telephony platform</td><td>Redundant/DR site</td></tr><tr><td>Geography</td><td>TX, VA/DC, FL preferred</td><td>Near DHS/CBP hubs</td></tr><tr><td>Employees</td><td>100-400</td><td>Turnover <60% annually</td></tr></table></div></details>
+<details><summary>Screening Criteria</summary><div class="dbody"><table><tr><th>Parameter</th><th>Must-Have</th><th>Nice-to-Have</th></tr><tr><td>Revenue</td><td>$5M-$75M</td><td>$8M-$40M sweet spot</td></tr><tr><td>Services</td><td>Contact center, BPO, OR admin services</td><td>Multilingual</td></tr><tr><td>Infrastructure</td><td>Established facility, telephony platform</td><td>Redundant/DR site</td></tr><tr><td>Geography</td><td>TX, VA/DC, FL preferred</td><td>Near DHS/CBP hubs</td></tr><tr><td>Employees</td><td>100-400</td><td>Turnover <60% annually</td></tr></table></div></details>
 <details><summary>Why GC Buys This</summary><div class="dbody"><ul class="bullets"><li><strong>DHS/CBP pipeline:</strong> DHS #2 in PM/Admin spending. CBP in El Paso/San Antonio drives contact center demand</li><li><strong>Commercial BPO huge:</strong> Insurance, healthcare, utilities outsource customer service &mdash; Federal-independent</li><li><strong>Bilingual advantage:</strong> Spanish-language critical for both DHS/CBP and commercial TX/FL markets</li><li><strong>Scale economics:</strong> Adding Federal call volume to existing center = high-margin incremental revenue</li></ul></div></details>
 <details><summary>Risk Factors</summary><div class="dbody"><ul class="bullets risk-list"><li><strong>Agent turnover:</strong> 60-100% annually is typical &mdash; check turnover, wages, benefits</li><li><strong>AI/automation threat:</strong> Chatbots reducing demand for simple calls &mdash; check complexity level</li><li><strong>Facility lease risk:</strong> Economics depend on lease terms &mdash; check remaining lease</li><li><strong>Wage inflation:</strong> Minimum wage increases directly impact margins</li></ul></div></details>
 </div>
 
 <!-- SECTOR 7: PRODUCTS & TACTICAL -->
 <div id="sub-s7" class="sub-panel">
+<div class="sm-group-label">Federal</div>
 <div class="sm-row">
-<div class="sm"><div class="sv">$29B</div><div class="sl">Federal Market (FY22-26)</div></div>
-<div class="sm"><div class="sv pos">+7.7%</div><div class="sl">Addressable CAGR</div></div>
-<div class="sm"><div class="sv">86.5%</div><div class="sl">DOD Share</div></div>
-<div class="sm"><div class="sv">15,451</div><div class="sl">Contract Count</div></div>
-<div class="sm"><div class="sv">TBD</div><div class="sl">Target Firms</div></div>
-<div class="sm"><div class="sv">TBD</div><div class="sl">Pipeline Opps</div></div>
-<div class="sm"><div class="sv">$574M</div><div class="sl">GC Contracts (FY22-25)</div></div>
+<div class="sm s-fed"><div class="sv">$29B <span class="conf conf-h">H</span></div><div class="sl">Federal Market (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">$191B <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. Market (&lt;$250M)</div></div>
+<div class="sm s-fed"><div class="sv pos">+7.7% <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. CAGR</div></div>
+<div class="sm s-fed"><div class="sv">$633M <span class="conf conf-h">H</span></div><div class="sl">GC Fed Contracts (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">86.5% <span class="conf conf-h">H</span></div><div class="sl">DOD Share</div></div>
+<div class="sm s-fed"><div class="sv">TBD</div><div class="sl">Fed Pipeline Opps</div></div>
+<div class="sm s-fed"><div class="sv pos">&uarr; Accelerating</div><div class="sl">Fed Forward Momentum</div></div>
 </div>
-<p class="sdesc"><strong>Note:</strong> GC's reselling/distribution business, not manufacturing. Dominated by major primes. GC role is niche distribution. <strong>Top States:</strong> CA, VA, MS, MA, FL</p>
-<details open><summary>Sub-segments</summary><div class="dbody"><table><tr><th>Sub-segment</th><th class="n">$</th><th class="n">Addr. CAGR</th><th>Signal</th></tr>
-<tr><td>Weapons & Munitions</td><td class="n">$11.5B</td><td class="n">+18.4%</td><td><span class="sig sig-warm">WARM</span></td></tr>
-<tr><td>Products General</td><td class="n">$7.8B</td><td class="n">+4.4%</td><td><span class="sig sig-stable">STABLE</span></td></tr>
-<tr><td>Electronics & Communications</td><td class="n">$5.0B</td><td class="n">-17.4%</td><td><span class="sig sig-cool">COOL</span></td></tr>
-<tr><td>Power & Generators</td><td class="n">$2.0B</td><td class="n">+2.7%</td><td><span class="sig sig-stable">STABLE</span></td></tr>
-<tr><td>UAS / Drones</td><td class="n">$1.7B</td><td class="n">+14.9%</td><td><span class="sig sig-warm">WARM</span></td></tr>
-<tr><td>Vehicles & Tactical</td><td class="n">$0.3B</td><td class="n">-14.3%</td><td><span class="sig sig-cool">COOL</span></td></tr>
-<tr><td><em>Track A NAICS (manufacturing, wholesale)</em></td><td class="n"><em>~$325B</em></td><td class="n"><em>+8.1%</em></td><td><span class="sig sig-warm">WARM</span></td></tr>
-</table></div></details>
-<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> Equipment distribution market $45-60B. Fragmented among specialty distributors. GC's opportunity is in telecom, power, and UAS equipment distribution to commercial customers.</p><p><strong>Durability:</strong> <span class="tag tm">Medium</span> DOD procurement is durable but prime-dominated. Distribution margins are thin. Value is in GSA/DLA channel access and commercial customer base.</p></div></details>
+<div class="sm-group-label">Commercial</div>
+<div class="sm-row">
+<div class="sm s-com"><div class="sv">$1,141B <span class="conf conf-h">H</span></div><div class="sl">Commercial Full Mkt (2022)</div></div>
+<div class="sm s-com"><div class="sv pos">+3.7% <span class="conf conf-h">H</span></div><div class="sl">Commercial Full CAGR (5yr)</div></div>
+<div class="sm s-com"><div class="sv">$123B <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. Mkt ($5-75M)</div></div>
+<div class="sm s-com"><div class="sv pos">+2.2% <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. CAGR</div></div>
+<div class="sm s-com"><div class="sv">&rarr; Steady</div><div class="sl">Forward Momentum</div></div>
+</div>
+<div class="sm-group-label">Shared</div>
+<div class="sm-row">
+<div class="sm s-shared"><div class="sv">7,519 <span class="conf conf-h">H</span></div><div class="sl">Target Firms ($5-75M, Census)</div></div>
+</div>
+<p class="sdesc"><strong>Note:</strong> GC's reselling/distribution business, not manufacturing. Dominated by major primes. GC role is niche distribution. <strong>Top States (Federal):</strong> CA, VA, MS, MA, FL</p>
+<p class="sdesc" style="font-size:.82em;margin-top:6px"><strong>Commercial sourcing:</strong> Census SUSB 2017 &amp; 2022 (Tier 1); 6 products/distribution NAICS (423110/830/860, 334220/290, 335921). <strong>Layer 3 forward view:</strong> Curtiss-Wright FY25 +12%, FY26 double-digit EPS outlook (SRC-151); L3Harris FY25 $21.9B +3%/+5% organic, $27.5B orders (SRC-150); Mercury Systems defense electronics (SRC-152); Grainger Q2'25 +5.6% industrial distribution (SRC-155). Electronics/Comms strong commercial sub-segment (+9.5% Addr).</p>
+<details open><summary>Sub-segments &mdash; Federal + Commercial</summary><div class="dbody">
+<table class="split">
+<tr><th rowspan="2">Sub-segment</th><th colspan="4" class="h-fed" style="text-align:center">Federal</th><th colspan="4" class="h-com c-div" style="text-align:center">Commercial</th></tr>
+<tr><th class="n h-fed">$ (FY22-26)</th><th class="n h-fed">Addr. CAGR</th><th class="h-fed">Signal</th><th class="h-fed">Conf</th><th class="n h-com c-div">Full CAGR</th><th class="n h-com">Addr. CAGR</th><th class="h-com">Signal</th><th class="h-com">Conf</th></tr>
+<tr><td>Weapons & Munitions</td><td class="n c-fed">$11.5B</td><td class="n c-fed">+18.4%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div"><em>n/a</em></td><td class="n c-com"><em>n/a</em></td><td class="c-com"><em>&mdash;</em></td><td class="c-com"><span class="conf conf-l">L</span></td></tr>
+<tr><td>Products General (Industrial Wholesale)</td><td class="n c-fed">$7.8B</td><td class="n c-fed">+4.4%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div">+4.1%</td><td class="n c-com">+2.9%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Electronics & Communications</td><td class="n c-fed">$5.0B</td><td class="n c-fed">-17.4%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+4.4%</td><td class="n c-com">+9.5%</td><td class="c-com"><span class="sig sig-warm">WARM</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Power & Electrical Components</td><td class="n c-fed">$2.0B</td><td class="n c-fed">+2.7%</td><td class="c-fed"><span class="sig sig-stable">STABLE</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+5.2%</td><td class="n c-com">-7.2%</td><td class="c-com"><span class="sig sig-cool">COOL</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>UAS / Drones</td><td class="n c-fed">$1.7B</td><td class="n c-fed">+14.9%</td><td class="c-fed"><span class="sig sig-warm">WARM</span></td><td class="c-fed"><span class="conf conf-m">M</span></td><td class="n c-com c-div"><em>n/a</em></td><td class="n c-com"><em>n/a</em></td><td class="c-com"><em>&mdash;</em></td><td class="c-com"><span class="conf conf-l">L</span></td></tr>
+<tr><td>Vehicles & Tactical</td><td class="n c-fed">$0.3B</td><td class="n c-fed">-14.3%</td><td class="c-fed"><span class="sig sig-cool">COOL</span></td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div"><em>n/a</em></td><td class="n c-com"><em>n/a</em></td><td class="c-com"><em>&mdash;</em></td><td class="c-com"><span class="conf conf-l">L</span></td></tr>
+<tr><td>Auto/Vehicle Wholesale (commercial)</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+3.4%</td><td class="n c-com">-0.7%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+</table>
+<p style="font-size:.78em;color:var(--dim);margin-top:8px"><strong>Notable signals:</strong> Most defense sub-segments (Weapons, UAS, Tactical) have no clean commercial NAICS analog &mdash; they're Federal-only markets. Electronics & Communications is the clearest Fed/Commercial divergence: Federal COOL (-17.4%) but Commercial Addressable WARM (+9.5%) &mdash; 5G/AI/IoT tailwinds in commercial. Power & Electrical Addr -7.2% COOL reflects hyperscale consolidation pushing out $5-75M firms. Acquisition thesis in this zone rests on equipment distribution with commercial customer base (Grainger-style), not manufacturing.</p>
+</div></details>
+<details><summary>Commercial & Durability</summary><div class="dbody"><p style="margin-bottom:8px"><strong>Commercial:</strong> $1.1T total products/distribution, $123B addressable ($5-75M firms). 7,519 firms in $5-75M range (Census). Most defense sub-segments (Weapons, UAS, Tactical) have no commercial analog. GC's opportunity is in equipment distribution (telecom, power, UAS) to commercial customers &mdash; Grainger Q2'25 +5.6% is the commercial comp.</p><p><strong>Durability:</strong> <span class="tag tm">Medium</span> DOD procurement is durable but prime-dominated. Distribution margins are thin. Value is in GSA/DLA channel access and commercial customer base.</p></div></details>
 <div class="arch-block"><h4>"Meet Apex Distribution LLC"</h4><p class="story">A specialty equipment distributor based in Virginia. $12M annual revenue. Focused on telecom, power, and UAS equipment. Serves both commercial and government clients through GSA/DLA schedules.</p><p class="story"><strong>Revenue mix:</strong> 60% commercial (telecom companies, utilities, construction firms), 25% Federal (DLA/GSA schedule sales), 15% state/local.</p><p class="story"><strong>What they do:</strong> Specialty equipment procurement, warehousing, logistics, and distribution. GSA schedule holder. Established vendor relationships with major OEMs.</p></div>
 <details><summary>Why GC Buys This</summary><div class="dbody"><ul class="bullets"><li><strong>GSA/DLA channel extension:</strong> Target's schedule access extends GC's product distribution capability</li><li><strong>Commercial customer base:</strong> Telecom, utility, and construction clients provide Federal-independent revenue</li><li><strong>Warehouse/logistics:</strong> Physical distribution infrastructure GC does not currently operate</li><li><strong>Low integration complexity:</strong> Distribution businesses are operationally independent</li></ul></div></details>
 <details><summary>Risk Factors</summary><div class="dbody"><ul class="bullets risk-list"><li><strong>Low margins:</strong> Distribution is a thin-margin business (5-12% gross typical)</li><li><strong>Prime dependency:</strong> Large DOD product contracts flow through major primes</li><li><strong>Contract vehicle access:</strong> Value depends on specific GSA/DLA schedule holdings</li><li><strong>Inventory risk:</strong> Specialty equipment distributors carry inventory exposure</li></ul></div></details>
@@ -440,20 +683,41 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 
 <!-- SECTOR 8: TRAVEL -->
 <div id="sub-s8" class="sub-panel">
+<div class="sm-group-label">Federal</div>
 <div class="sm-row">
-<div class="sm"><div class="sv">$1.4B</div><div class="sl">Federal Market (FY22-26)</div></div>
-<div class="sm"><div class="sv pos">+29.9%</div><div class="sl">Addressable CAGR (recovery)</div></div>
-<div class="sm"><div class="sv">DOD 41% / State 33%</div><div class="sl">Top Agencies</div></div>
-<div class="sm"><div class="sv">--</div><div class="sl">Contract Count</div></div>
-<div class="sm"><div class="sv">TBD</div><div class="sl">Target Firms</div></div>
-<div class="sm"><div class="sv">TBD</div><div class="sl">Pipeline Opps</div></div>
-<div class="sm"><div class="sv">$5M</div><div class="sl">GC Contracts (FY22-25)</div></div>
+<div class="sm s-fed"><div class="sv">$1.4B <span class="conf conf-h">H</span></div><div class="sl">Federal Market (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">$2.1B <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. Market (&lt;$250M)</div></div>
+<div class="sm s-fed"><div class="sv pos">+29.9% <span class="conf conf-h">H</span></div><div class="sl">Fed Addr. CAGR (recovery)</div></div>
+<div class="sm s-fed"><div class="sv">$5M <span class="conf conf-h">H</span></div><div class="sl">GC Fed Contracts (FY22-26)</div></div>
+<div class="sm s-fed"><div class="sv">DOD 41% / State 33%</div><div class="sl">Top Fed Agencies</div></div>
+<div class="sm s-fed"><div class="sv">TBD</div><div class="sl">Fed Pipeline Opps</div></div>
+<div class="sm s-fed"><div class="sv">&rarr; Steady</div><div class="sl">Fed Forward Momentum</div></div>
 </div>
-<p class="sdesc"><strong>Note:</strong> Very small Federal market. CAGR is post-COVID recovery, not structural growth. Travel services complement GC's existing travel operations.</p>
-<details open><summary>Sub-segments</summary><div class="dbody"><table><tr><th>Sub-segment</th><th class="n">$</th><th class="n">Addr. CAGR</th><th>Signal</th></tr>
-<tr><td>Travel General (booking, lodging, per diem)</td><td class="n">$1.4B</td><td class="n">+48.6%</td><td><span class="sig sig-warm">WARM</span> (recovery)</td></tr>
-<tr><td><em>Track A NAICS (travel agencies)</em></td><td class="n"><em>~$0.1B</em></td><td class="n"><em>+3.4%</em></td><td><span class="sig sig-stable">STABLE</span></td></tr>
-</table></div></details>
+<div class="sm-group-label">Commercial</div>
+<div class="sm-row">
+<div class="sm s-com"><div class="sv">$275B <span class="conf conf-h">H</span></div><div class="sl">Commercial Full Mkt (2022)</div></div>
+<div class="sm s-com"><div class="sv pos">+3.4% <span class="conf conf-h">H</span></div><div class="sl">Commercial Full CAGR (5yr)</div></div>
+<div class="sm s-com"><div class="sv">$56B <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. Mkt ($5-75M)</div></div>
+<div class="sm s-com"><div class="sv pos">+2.2% <span class="conf conf-h">H</span></div><div class="sl">Commercial Addr. CAGR</div></div>
+<div class="sm s-com"><div class="sv">&rarr; Steady</div><div class="sl">Forward Momentum</div></div>
+</div>
+<div class="sm-group-label">Shared</div>
+<div class="sm-row">
+<div class="sm s-shared"><div class="sv">4,210 <span class="conf conf-h">H</span></div><div class="sl">Target Firms ($5-75M, Census)</div></div>
+</div>
+<p class="sdesc"><strong>Note:</strong> Very small Federal market. Fed CAGR reflects post-COVID recovery, not structural growth. Travel services complement GC's existing travel operations.</p>
+<p class="sdesc" style="font-size:.82em;margin-top:6px"><strong>Commercial sourcing:</strong> Census SUSB 2017 &amp; 2022 (Tier 1); 4 travel NAICS (561510/520/599, 721110). <strong>Layer 3 forward view:</strong> Travel tech market $7.1B 2025 &rarr; $15.3B 2035, +8% CAGR (Fact.MR); Sabre FY25 $2.77B +1%, single-segment post-Hospitality sale, SabreMosaic AI airline platform launched (SRC-160). Note: most consumer travel giants (Booking, Expedia) are B2C and not directly relevant to GC's B2B travel acquisition thesis.</p>
+<details open><summary>Sub-segments &mdash; Federal + Commercial</summary><div class="dbody">
+<table class="split">
+<tr><th rowspan="2">Sub-segment</th><th colspan="4" class="h-fed" style="text-align:center">Federal</th><th colspan="4" class="h-com c-div" style="text-align:center">Commercial</th></tr>
+<tr><th class="n h-fed">$ (FY22-26)</th><th class="n h-fed">Addr. CAGR</th><th class="h-fed">Signal</th><th class="h-fed">Conf</th><th class="n h-com c-div">Full CAGR</th><th class="n h-com">Addr. CAGR</th><th class="h-com">Signal</th><th class="h-com">Conf</th></tr>
+<tr><td>Travel Agencies</td><td class="n c-fed">$1.4B</td><td class="n c-fed">+48.6%</td><td class="c-fed"><span class="sig sig-warm">WARM</span> (recovery)</td><td class="c-fed"><span class="conf conf-h">H</span></td><td class="n c-com c-div">+10.3%</td><td class="n c-com">+0.4%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Tour Operators</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">-0.4%</td><td class="n c-com">-0.8%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Other Travel Arrangement</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+7.4%</td><td class="n c-com">+0.7%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+<tr><td>Lodging / Hotels</td><td class="n c-fed"><em>Track A</em></td><td class="n c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="c-fed"><em>&mdash;</em></td><td class="n c-com c-div">+2.2%</td><td class="n c-com">+2.8%</td><td class="c-com"><span class="sig sig-stable">STABLE</span></td><td class="c-com"><span class="conf conf-h">H</span></td></tr>
+</table>
+<p style="font-size:.78em;color:var(--dim);margin-top:8px"><strong>Notable signals:</strong> Every commercial sub-segment here shows Full CAGR &gt;&gt; Addressable CAGR &mdash; the travel industry consolidated sharply post-COVID. Full market growth is real but captured by large online travel agencies (Booking, Expedia), GDS operators (Sabre, Amadeus), and hotel chains. $5-75M travel firms have flat-to-declining share. Confirms Travel as a NICHE zone: strong Federal recovery CAGR is real but Federal market is tiny ($1.4B); commercial is large but $5-75M competitive position is weak.</p>
+</div></details>
 <details open><summary>Market Context</summary><div class="dbody">
 <p style="font-size:.9em;margin-bottom:8px"><strong>Federal:</strong> $1.4B across FY22-26 is a very small Federal market. The +29.9% addressable CAGR reflects post-COVID travel recovery to pre-pandemic baselines, not structural growth in the sector.</p>
 <p style="font-size:.9em;margin-bottom:8px"><strong>Commercial:</strong> US corporate travel market segment ~$350B (from ~$1.5T global). Corporate travel management companies (TMCs) serve enterprises with booking, expense management, policy compliance, and traveler safety tools.</p>
@@ -470,6 +734,11 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <!-- TAB 3: MARKET & PIPELINE -->
 <!-- ================================================================ -->
 <div id="tab-market" class="tab-panel">
+
+<div class="section" style="margin-bottom:8px">
+<div class="stitle" style="color:#4f8cff;border-color:#4f8cff">Federal Market &amp; Pipeline</div>
+<p class="sdesc">Federal contracting landscape across GC's 8 capability zones &mdash; geography, agency pipeline, set-aside dynamics, contract vehicle coverage. Sourced from USAspending (market) and Govwin (pipeline).</p>
+</div>
 
 <div class="section">
 <div class="stitle">Geographic Heat Map</div>
@@ -537,19 +806,42 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 </table></div></details>
 </div>
 
+<div class="section" style="margin-bottom:8px">
+<div class="stitle" style="color:#22d3a7;border-color:#22d3a7">Commercial Market</div>
+<p class="sdesc">Commercial market landscape for GC's 8 capability zones. Sourced from Census SUSB 2017-2022 (market size + firm counts), with forward view from public 10-K filings. No commercial equivalent exists for pipeline / set-aside / contract vehicles &mdash; those remain Federal-only above.</p>
+</div>
+
 <div class="section">
-<div class="stitle">Commercial Market & Target Density</div>
-<table><tr><th>Capability Zone</th><th class="n">Commercial Market</th><th class="n">CAGR</th><th class="n">Firms $5-25M (Census)</th><th class="n">SBA Registered (SB)</th><th>Fragmentation</th></tr>
-<tr><td>IT/Cyber</td><td class="n">$64-70B</td><td class="n pos">10.5-11%</td><td class="n hi">4,818</td><td class="n">109,753</td><td><span class="tag tm">Medium</span></td></tr>
-<tr><td>Facilities</td><td class="n">$283-300B</td><td class="n pos">6.0%</td><td class="n hi">9,578</td><td class="n">78,142</td><td><span class="tag th">Very High</span></td></tr>
-<tr><td>Environmental</td><td class="n">$22B</td><td class="n pos">6.5%</td><td class="n hi">1,131</td><td class="n">34,448</td><td><span class="tag th">Very High</span></td></tr>
-<tr><td>Financial</td><td class="n">$145B</td><td class="n pos">4.5-7.8%</td><td class="n hi">4,917</td><td class="n">82,946</td><td><span class="tag tm">Medium</span></td></tr>
-<tr><td>Health IT</td><td class="n">$104B</td><td class="n pos">13.9%</td><td class="n hi">2,633</td><td class="n">23,047</td><td><span class="tag tm">Medium</span></td></tr>
-<tr><td>PM/Admin</td><td class="n">$36-71B</td><td class="n pos">9-14.6%</td><td class="n hi">2,976</td><td class="n">27,452</td><td><span class="tag tl">Consolidated</span></td></tr>
-<tr><td>Products</td><td class="n">$45-60B</td><td class="n pos">4%</td><td class="n">TBD</td><td class="n">--</td><td><span class="tag tm">Medium</span></td></tr>
-<tr><td>Travel</td><td class="n">~$350B (US)</td><td class="n pos">8%</td><td class="n">TBD</td><td class="n">--</td><td><span class="tag tl">Consolidated</span></td></tr>
+<div class="stitle">Commercial Market Size by Zone</div>
+<p class="sdesc">Addressable = revenue captured by firms in the $5-75M band &mdash; the slice a GC acquisition target would compete for. Facilities has the largest addressable opportunity ($634B) despite Health services being the biggest total market ($2.2T).</p>
+<div class="cg"><div class="cb full"><h4>Full Market vs Addressable ($5-75M) &mdash; Commercial ($B, 2022) <span class="conf conf-h">Census SUSB</span></h4><canvas id="commMarketChart"></canvas></div></div>
+</div>
+
+<div class="section">
+<div class="stitle">Commercial Addressable CAGR by Zone</div>
+<p class="sdesc">5-year CAGR (2017 &rarr; 2022) of receipts captured by $5-75M firms. IT/Cyber leads (+8.0%), followed by Energy/Env (+6.3%) and Facilities (+6.2%). Products and Travel are flattest (+2.2%).</p>
+<div class="cg"><div class="cb full"><h4>Commercial Addressable CAGR &mdash; 2017 to 2022 <span class="conf conf-h">Census SUSB</span></h4><canvas id="commCagrChart"></canvas></div></div>
+</div>
+
+<div class="section">
+<div class="stitle">Target Firm Density by Zone</div>
+<p class="sdesc">Number of US firms with $5-75M annual revenue in each zone's commercial NAICS set. Facilities has <strong>43,285 firms &mdash; 13x the pool of Financial</strong>. Deep acquisition pools in Facilities, PM/Admin, Health, and IT/Cyber.</p>
+<div class="cg"><div class="cb full"><h4>Target Firms in $5-75M Revenue Band (2022) <span class="conf conf-h">Census SUSB</span></h4><canvas id="targetFirmsChart"></canvas></div></div>
+</div>
+
+<div class="section">
+<div class="stitle">Commercial Market &amp; Target Density &mdash; Summary Table</div>
+<table><tr><th>Capability Zone</th><th class="n">Commercial Full Mkt (2022)</th><th class="n">Full CAGR (5yr)</th><th class="n">Addr. Mkt ($5-75M)</th><th class="n">Addr. CAGR</th><th class="n">Firms $5-75M (Census)</th><th>Fragmentation</th></tr>
+<tr><td>IT/Cyber</td><td class="n">$1,609B</td><td class="n pos">+10.5%</td><td class="n">$253B</td><td class="n pos">+8.0%</td><td class="n hi">15,890</td><td><span class="tag tm">Medium</span></td></tr>
+<tr><td>Facilities</td><td class="n">$1,912B</td><td class="n pos">+7.0%</td><td class="n">$634B</td><td class="n pos">+6.2%</td><td class="n hi">43,285</td><td><span class="tag th">Very High</span></td></tr>
+<tr><td>Environmental</td><td class="n">$177B</td><td class="n pos">+8.0%</td><td class="n">$45B</td><td class="n pos">+6.3%</td><td class="n hi">3,338</td><td><span class="tag th">Very High</span></td></tr>
+<tr><td>Financial</td><td class="n">$556B</td><td class="n pos">+11.4%</td><td class="n">$41B</td><td class="n pos">+5.0%</td><td class="n hi">3,298</td><td><span class="tag tm">Medium</span></td></tr>
+<tr><td>Health IT & Clinical</td><td class="n">$2,161B</td><td class="n pos">+5.5%</td><td class="n">$264B</td><td class="n pos">+3.5%</td><td class="n hi">17,528</td><td><span class="tag tm">Medium</span></td></tr>
+<tr><td>PM/Admin</td><td class="n">$1,062B</td><td class="n pos">+8.6%</td><td class="n">$256B</td><td class="n pos">+5.2%</td><td class="n hi">18,969</td><td><span class="tag tl">Consolidated</span></td></tr>
+<tr><td>Products & Tactical</td><td class="n">$1,141B</td><td class="n pos">+3.7%</td><td class="n">$123B</td><td class="n pos">+2.2%</td><td class="n hi">7,519</td><td><span class="tag tm">Medium</span></td></tr>
+<tr><td>Travel</td><td class="n">$275B</td><td class="n pos">+3.4%</td><td class="n">$56B</td><td class="n pos">+2.2%</td><td class="n hi">4,210</td><td><span class="tag tl">Consolidated</span></td></tr>
 </table>
-<p style="font-size:.78em;color:var(--dim);margin-top:6px">$5M-$25M counts from Census SUSB 2022 receipt-size tables (actual data). SBA = small businesses registered in SAM.gov. Products and Travel not yet classified in Census data.</p>
+<p style="font-size:.78em;color:var(--dim);margin-top:6px"><strong>Sources:</strong> All values from Census SUSB 2017 and 2022 (Tier 1, High confidence). Addressable = firms with revenue in $5M-$75M band (SUSB bands 07-16). 5-year CAGR = 2017&rarr;2022. See <code>research/data/sources-registry.md</code> SRC-001.</p>
 </div>
 
 <div class="section">
@@ -565,17 +857,41 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <div class="stitle">Acquisition Buy-Side Brief</div>
 <p class="sdesc"><strong>Confidential | For Authorized Brokers & Intermediaries Only</strong> &mdash; This tab contains the complete broker-ready document. Can be printed separately.</p>
 
+<!-- GC Quick Facts Stat Bar -->
+<div class="kpi-grid" style="margin-bottom:16px">
+<div class="kpi"><div class="v">$500M+</div><div class="l">Annual Revenue</div></div>
+<div class="kpi"><div class="v">20+ yrs</div><div class="l">Federal Track Record</div></div>
+<div class="kpi"><div class="v">Up to $75M</div><div class="l">Deal Capacity per Acquisition</div></div>
+<div class="kpi"><div class="v">8 Zones</div><div class="l">Capability Sectors in Scope</div></div>
+</div>
+
 <div class="brief-section">
 <h4>About the Buyer</h4>
-<p style="font-size:.9em"><strong>GOLD CREEK</strong> is a $500M+ annual revenue professional services company with deep Federal government expertise across IT, facilities, financial management, health, energy, and program management. GOLD CREEK is seeking to acquire <strong>commercial companies</strong> to diversify its revenue base.</p>
-<p style="font-size:.9em;margin-top:8px">Please screen against these criteria before sending opportunities &mdash; this saves time for both sides.</p>
+<p style="font-size:.92em;margin-bottom:10px"><strong>GOLD CREEK ("GC")</strong> is a $500M&ndash;$600M/year professional services company with two decades of Federal government expertise across 8 capability areas: IT managed services &amp; cybersecurity, facilities management, environmental services, financial management, health services, program management, products &amp; tactical distribution, and travel. GC is a trusted prime and subcontractor to DOD, VA, HHS, DHS, GSA, and many Federal civilian agencies &mdash; with $2.6B+ in GC-won contracts across FY22&ndash;26.</p>
+<p style="font-size:.92em;margin-bottom:10px"><strong>Strategic context:</strong> GC's revenue is ~90% Federal today. As Federal spending faces cyclical pressure (e.g., Department of Government Efficiency realignment), the CEO and Board have prioritized <strong>commercial diversification</strong> as the #1 strategic imperative. GC is actively pursuing acquisitions of established, profitable, primarily-commercial services companies that connect to GC's capability map &mdash; allowing GC to deploy its Federal playbook (contract vehicles, clearances, scale, processes) into commercial markets while preserving the acquired company's brand, customers, and operating autonomy.</p>
+<p style="font-size:.92em;margin-bottom:10px"><strong>Deal profile:</strong> Up to $75M purchase price / enterprise value per acquisition. Target firm annual revenue $5M&ndash;$75M. Cash on hand; internal M&amp;A team; active buyer, not a one-time tire-kicker. We expect to complete multiple acquisitions over the next 24 months.</p>
+<p style="font-size:.9em;margin-top:10px;color:var(--dim)"><em>Please screen opportunities against the criteria below before submitting &mdash; this respects everyone's time and sharpens deal flow.</em></p>
+</div>
+
+<div class="brief-section" style="border-color:#22d3a7">
+<h4 style="color:#22d3a7">Why Sellers Should Engage with GOLD CREEK</h4>
+<p style="font-size:.9em;margin-bottom:10px">When you represent an owner considering liquidity, position GC as a differentiated acquirer on these points:</p>
+<ul class="bullets" style="font-size:.9em;margin-bottom:6px">
+<li><strong>Standalone subsidiary model (baseline):</strong> We preserve the acquired company's brand, culture, management team, and operating independence. Target's employees, customers, and vendor relationships continue unchanged post-close. This is not a roll-up / consolidation play.</li>
+<li><strong>Small Business status preservation:</strong> Under the standalone subsidiary structure, acquired companies typically retain their SBA size status, preserving access to set-aside contract pipelines (40&ndash;73% of Federal opportunities in our target zones).</li>
+<li><strong>Immediately accretive Federal access:</strong> GC holds 8 active Federal contract vehicles (GSA MAS, OASIS+ unrestricted and 8(a), STARS III, SeaPort-NxG, MDA SHIELD, DIA SITE III). Targets gain access to a Federal channel they likely could not easily build on their own.</li>
+<li><strong>Capital to grow, not strip-mine:</strong> GC acquires to deploy additional capital into growth &mdash; new geographies, new service lines, new sales capacity. We do not strip costs, offshore, or force synergies.</li>
+<li><strong>Experienced M&amp;A team + cash:</strong> Internal corp dev function. Cash-funded deals (no financing contingency). Proven ability to execute within 90&ndash;120 days from LOI. References available.</li>
+<li><strong>Management continuity expected:</strong> We want existing leadership to stay. Earnouts, rollover equity, and retention agreements structured to align long-term. Founder/CEO liquidity paired with active role post-close.</li>
+<li><strong>Durable, non-extractive buyer:</strong> GC is not PE; no fund lifecycle pressure, no flip timeline, no dividend recap. Long-term operator mindset.</li>
+</ul>
 </div>
 
 <div class="brief-section">
 <h4>What We're Looking For</h4>
 <table><tr><th>Parameter</th><th>Requirement</th></tr>
-<tr><td>Revenue</td><td>$5M-$25M annual</td></tr>
-<tr><td>Purchase price</td><td>Up to ~$25M (flexible)</td></tr>
+<tr><td>Revenue</td><td>$5M-$75M annual</td></tr>
+<tr><td>Purchase price / EV</td><td>$5M-$75M (flexible for the right target; typical 1.0x-1.5x revenue for services)</td></tr>
 <tr><td>Revenue mix</td><td>Primarily commercial; some Fed/S&L OK</td></tr>
 <tr><td>Min. sector relevance</td><td>&ge;25% of revenue in one of our 8 capability sectors</td></tr>
 <tr><td>Maturity</td><td>Established business, &ge;5 years, proven track record</td></tr>
@@ -585,21 +901,61 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 </table>
 </div>
 
-<div class="brief-section"><h4>Sector 1: IT Managed Services & Cybersecurity</h4><p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>MSPs with recurring monthly revenue</li><li>MSSPs &mdash; SOC, EDR, SIEM, zero trust</li><li>Cloud migration and infrastructure management</li><li>IT staffing with managed services component</li></ul><p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $8-25M, &ge;50% recurring MRR, SOC 2. <strong>Prefer:</strong> VA/MD/DC, TX, FL, AL, CO. <strong>Bonus:</strong> FedRAMP, cleared staff, CMMC/HIPAA consulting.</p></div>
+<div class="brief-section"><h4>Sector 1: IT Managed Services &amp; Cybersecurity</h4>
+<p style="font-size:.82em;color:var(--dim);margin-bottom:10px"><strong>Market context:</strong> $253B commercial addressable market ($5-75M firms), +8.0% CAGR 2017-2022. 15,890 firms in target revenue band (Census SUSB). Forward view: core IT services +3-6% (Accenture, Cognizant FY26 guidance), cybersecurity +15-25% (CrowdStrike +23% ARR FY25), cloud/AI +15-30% (Gartner).</p>
+<p style="font-size:.9em;margin-bottom:10px"><strong>Strategic rationale:</strong> GC has $779M in Federal IT/Cyber contracts (#1 GC capability). A commercial IT services acquisition extends that capability to private-sector customers and captures 70%+ commercial MRR that's Federal-independent. Cyber sub-segment is the standout growth story.</p>
+<p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>MSPs with recurring monthly revenue (MRR model)</li><li>MSSPs &mdash; SOC, EDR, SIEM, zero trust, incident response</li><li>Cloud migration and infrastructure management firms</li><li>Application development / custom software (agile, DevSecOps)</li><li>Health IT consultancies with EHR (Cerner, Epic) experience</li></ul>
+<p style="font-size:.85em;margin-top:6px"><strong>Archetype example (illustrative):</strong> "Meridian Shield IT" &mdash; a 12-year-old managed IT services and cybersecurity firm in Herndon, VA. $14M annual revenue, 85 employees. 70% commercial (law firms, healthcare, financial services in DC metro), 20% state/local, 10% Federal subcontracting. 24/7 SOC monitoring, EDR, Office 365/Azure admin, CMMC/HIPAA/PCI-DSS compliance consulting. 92% annual retention.</p>
+<p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $10-50M revenue sweet spot, &ge;50% recurring MRR, SOC 2 certified. <strong>Prefer:</strong> VA/MD/DC, TX, FL, AL, CO. <strong>Pay premium for:</strong> FedRAMP authorization, CMMC level 2+, cleared staff, Oracle/Microsoft/AWS partner status. <strong>Dealbreakers:</strong> body-shop staffing, &gt;50% Federal, one-customer concentration.</p></div>
 
-<div class="brief-section"><h4>Sector 2: Facilities Management & Mechanical Services</h4><ul class="brief-wants"><li>Commercial FM companies, HVAC/plumbing/electrical contractors</li><li>Building operations and maintenance firms</li><li>Janitorial and grounds maintenance with institutional clients</li></ul><p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $5-20M, recurring maintenance contracts, multi-site. <strong>Prefer:</strong> TX, VA, FL, NC, WA, CA &mdash; near military bases. <strong>Bonus:</strong> 24/7 dispatch, multi-state licensing, OSHA certs.</p></div>
+<div class="brief-section"><h4>Sector 2: Facilities Management &amp; Mechanical Services</h4>
+<p style="font-size:.82em;color:var(--dim);margin-bottom:10px"><strong>Market context:</strong> $634B commercial addressable ($5-75M firms) &mdash; largest addressable market among all 8 zones. +6.2% CAGR 2017-2022. <strong>43,285 firms in target revenue band</strong> (Census SUSB) &mdash; deepest acquisition pool by far (~13x the Financial pool). Most fragmented commercial market: CBRE, JLL, ABM at top but thousands of regional players.</p>
+<p style="font-size:.9em;margin-bottom:10px"><strong>Strategic rationale:</strong> GC does $143M in Federal facilities (base ops, HVAC, mechanical) for Army, Navy, DHS, VA. A commercial FM acquisition gives GC a property-management / commercial-building customer base immediately, while the target gains GC's Federal base-ops vehicle access. Most fragmented market = easiest diligence (many deals available) and least buyer competition.</p>
+<p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>Commercial FM companies with recurring maintenance contracts</li><li>HVAC, plumbing, electrical, mechanical contractors (commercial, not residential)</li><li>Building operations and maintenance firms w/ multi-site clients</li><li>Janitorial and grounds maintenance with institutional clients (schools, hospitals, corporate campuses)</li><li>A&amp;E design firms with commercial portfolios</li></ul>
+<p style="font-size:.85em;margin-top:6px"><strong>Archetype example (illustrative):</strong> "Summit Base Services" &mdash; 20-year-old commercial FM and HVAC company in Killeen, TX adjacent to Fort Cavazos. $11M revenue, 120 field technicians. 60% commercial (property mgmt, retail chains, office complexes), 25% state/local, 15% Federal subcontracting. 24/7 emergency dispatch, 40+ commercial properties managed.</p>
+<p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $10-50M revenue sweet spot, recurring maintenance contracts, multi-site. <strong>Prefer:</strong> TX, VA, FL, NC, WA, CA &mdash; near military installations. <strong>Pay premium for:</strong> 24/7 dispatch capability, multi-state contractor licensing, OSHA/journeyman credentials, Davis-Bacon experience. <strong>Dealbreakers:</strong> residential-only, low-margin pure-commodity, high turnover &gt;60% annually.</p></div>
 
-<div class="brief-section"><h4>Sector 3: Environmental Remediation & Energy Services</h4><ul class="brief-wants"><li>PFAS/Superfund/brownfield remediation firms</li><li>Environmental consulting and site assessment</li><li>Energy services (ESPC, energy auditing)</li><li>Solar/EV charging with commercial clients</li></ul><p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $5-20M, PEs/PGs on staff, multi-year backlog. <strong>Prefer:</strong> CO, WA, SC, NJ, TX, CA. <strong>Bonus:</strong> PFAS experience, municipal water utility clients, ESPC expertise.</p></div>
+<div class="brief-section"><h4>Sector 3: Environmental Remediation &amp; Energy Services</h4>
+<p style="font-size:.82em;color:var(--dim);margin-bottom:10px"><strong>Market context:</strong> $45B commercial addressable ($5-75M firms), +6.3% CAGR. 3,338 firms in target revenue band (Census SUSB). Most fragmented sector behind Facilities (top 5 hold just 10-17%). Forward view: remediation +8.2% CAGR 2025-2030 (MarketsandMarkets), Montrose won $1.5B USAF PFAS MATOC (Mar 2025), Clean Harbors expanding via acquisitions.</p>
+<p style="font-size:.9em;margin-bottom:10px"><strong>Strategic rationale:</strong> PFAS contamination exists at 700+ DOD installations &mdash; multi-decade regulatory tailwind. GC does $69M in Federal env work today. Acquiring a commercial-heavy remediation firm taps industrial/utility/municipal markets that are regulatory-driven and non-cyclical. Highest "warm not hot" score: durable, regulation-backed, diversification-rich.</p>
+<p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>PFAS, Superfund, brownfield remediation firms</li><li>Environmental consulting and site assessment (Phase I/II)</li><li>Energy services: ESPC, energy auditing, performance contracting</li><li>Solar / EV charging installers with commercial clients</li><li>Industrial wastewater / hazardous waste treatment</li></ul>
+<p style="font-size:.85em;margin-top:6px"><strong>Archetype example (illustrative):</strong> "CleanPath Environmental" &mdash; 15-year-old remediation firm in Colorado Springs, CO. $9M revenue, 55 employees (environmental engineers, geologists, PMs, field techs). 45% commercial (industrial cleanup, brownfield, PFAS water testing), 30% state/local, 25% Federal sub (PFAS at Peterson SFB/Fort Carson). 4 licensed PEs on staff.</p>
+<p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $8-40M revenue sweet spot, PEs/PGs on staff, multi-year backlog. <strong>Prefer:</strong> CO, WA, SC, NJ, TX, CA (near DOD installations with known contamination). <strong>Pay premium for:</strong> PFAS experience, municipal water utility clients, ESPC track record, EPA list certifications. <strong>Dealbreakers:</strong> project-only revenue (no backlog), unmanageable pollution liability exposure, PEs leaving at close.</p></div>
 
-<div class="brief-section"><h4>Sector 4: Financial Consulting & ERP</h4><ul class="brief-wants"><li>Financial consulting (audit, compliance, controls, analytics)</li><li>ERP implementation (Oracle, SAP, Workday, OneStream)</li><li>Outsourced accounting/CFO services</li><li>Financial data analytics and reporting</li></ul><p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $5-15M, CPAs/CISAs on staff. <strong>Prefer:</strong> DC metro strongly preferred. <strong>Bonus:</strong> Oracle Cloud specifically, FIAR experience, Power BI/Tableau.</p></div>
+<div class="brief-section"><h4>Sector 4: Financial Consulting &amp; ERP</h4>
+<p style="font-size:.82em;color:var(--dim);margin-bottom:10px"><strong>Market context:</strong> $41B commercial addressable ($5-75M firms), +5.0% CAGR. 3,298 firms in target revenue band (Census SUSB) &mdash; narrowest acquisition pool among GC zones. Forward view: Booz Allen FY25 +12.4% revenue (AI business +30% to $800M), Huron FY25 +12% RBR (5 consecutive years of growth), FAR reform + AI integration tailwinds.</p>
+<p style="font-size:.9em;margin-bottom:10px"><strong>Strategic rationale:</strong> GC does $152M in Federal financial management work (Treasury BFS, DOD FIAR, HHS). Audit sub-segment is the Fed growth story (+23% Addressable CAGR). Acquiring a commercial-heavy financial consulting or ERP firm adds commercial ERP/audit capability and provides a DC-metro talent base. Pool is narrow but deal quality is high &mdash; CPAs/CISAs are deeply credentialed.</p>
+<p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>Financial consulting firms (audit, internal controls, compliance, analytics)</li><li>ERP implementation partners (Oracle, SAP, Workday, OneStream)</li><li>Outsourced accounting / fractional CFO services</li><li>Financial data analytics, reporting, cost allocation</li><li>Fraud / improper payment investigation firms</li></ul>
+<p style="font-size:.85em;margin-top:6px"><strong>Archetype example (illustrative):</strong> "Clearview Financial Partners" &mdash; 10-year-old financial consulting and ERP firm in Arlington, VA. $8M revenue, 45 employees (CPAs, analysts, ERP consultants, data engineers). 55% commercial (Oracle/SAP ERP implementations, outsourced CFO, analytics), 30% Federal sub (FIAR, HHS), 15% state/local. Strong CPA and CISA bench.</p>
+<p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $7-30M revenue sweet spot, CPAs/CISAs on staff. <strong>Prefer:</strong> DC metro strongly preferred (Arlington, McLean, Reston, Bethesda). <strong>Pay premium for:</strong> Oracle Cloud expertise, FIAR experience, Power BI/Tableau, EVM certification, government clearances. <strong>Dealbreakers:</strong> prime-dependency &gt;30%, Big 4 talent-drain risk unaddressed, no recurring revenue model.</p></div>
 
-<div class="brief-section"><h4>Sector 5: Health IT & Clinical Services</h4><ul class="brief-wants"><li>Health IT consulting (EHR implementation/optimization)</li><li>Telehealth platform companies or partners</li><li>Clinical staffing with health IT crossover</li><li>Health data analytics (population health, quality measures)</li></ul><p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $5-20M, Cerner/Epic experience, HIPAA compliant. <strong>Prefer:</strong> MD, VA, DC, Nashville, Boston. <strong>Bonus:</strong> Dual EHR platform, VA/DOD experience, clinical credentials on staff.</p></div>
+<div class="brief-section"><h4>Sector 5: Health IT &amp; Clinical Services</h4>
+<p style="font-size:.82em;color:var(--dim);margin-bottom:10px"><strong>Market context:</strong> $264B commercial addressable ($5-75M firms), +3.5% CAGR. <strong>17,528 firms</strong> in target revenue band (Census SUSB). Forward view: digital health market projected $427B 2025 &rarr; $1.5T 2032, Maximus FY25 +2.4%, Evolent FY24 +30% YoY, Premier healthcare tech platform strong.</p>
+<p style="font-size:.9em;margin-bottom:10px"><strong>Strategic rationale:</strong> GC has $204M in Federal health work (HHS, VA, DHA/MHS). While the Federal side is currently COOL (post-COVID decline, -14.5% Addr CAGR), the commercial side is the diversification opportunity. Commercial health IT, clinical staffing, and diagnostic lab sub-segments all show positive CAGR. Major Federal programs (VA EHRM $20B+ running through 2030s, DHA MHS Genesis) continue to provide Federal revenue continuity.</p>
+<p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>Health IT consulting (EHR implementation, Cerner/Oracle Health, Epic)</li><li>Clinical staffing firms (RNs, informaticists, EHR trainers)</li><li>Telehealth platform companies or deployment partners</li><li>Health data analytics (population health, quality measures, HEDIS)</li><li>Diagnostic lab services with commercial client base</li><li>Home health care service firms</li></ul>
+<p style="font-size:.85em;margin-top:6px"><strong>Archetype example (illustrative):</strong> "Apex Health Technologies" &mdash; 11-year-old health IT and clinical staffing company in Rockville, MD. $12M revenue, 70 employees + ~40 contract clinical staff. 50% commercial (Cerner/Epic EHR implementation for hospital systems), 25% Federal sub (VA EHRM, DHA MHS Genesis), 25% clinical staffing. Proximity to NIH, HHS, FDA, DHA, Walter Reed.</p>
+<p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $10-50M revenue sweet spot, Cerner/Epic experience, HIPAA/HITRUST compliant. <strong>Prefer:</strong> MD, VA, DC, Nashville, Boston, San Antonio. <strong>Pay premium for:</strong> Dual EHR platform capability (Cerner + Epic), VA/DOD experience, SOC 2 Type II, clinical credentials on staff. <strong>Dealbreakers:</strong> 100% single-EHR vendor, clinical staffing &gt;70% of revenue (low margin), expired HIPAA controls.</p></div>
 
-<div class="brief-section"><h4>Sector 6: Program Management & Admin Services</h4><ul class="brief-wants"><li>Third-party contact center operators</li><li>BPO (document processing, eligibility determination)</li><li>Admin services with contact center capability</li><li>Multilingual customer service operations</li></ul><p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $5-20M, 100+ seats, multi-year contracts. <strong>Prefer:</strong> TX, FL, OH, NC, GA. <strong>Bonus:</strong> Bilingual EN/ES, government experience, DR site, low turnover.</p></div>
+<div class="brief-section"><h4>Sector 6: Program Management &amp; Admin Services</h4>
+<p style="font-size:.82em;color:var(--dim);margin-bottom:10px"><strong>Market context:</strong> $256B commercial addressable ($5-75M firms), +5.2% CAGR. <strong>18,969 firms</strong> in target revenue band (Census SUSB) &mdash; second-deepest acquisition pool behind Facilities. Forward view: Robert Half FY26 +2-3% constant currency, ManpowerGroup challenged NA/Europe, 40% of hiring managers plan to engage contract pros.</p>
+<p style="font-size:.9em;margin-bottom:10px"><strong>Strategic rationale:</strong> GC does $618M in Federal PM/Admin work &mdash; second-largest GC footprint (after IT). Federal market is COOL (-6.3% Addr CAGR, DOGE pressure) but commercial is WARM (+5.2%). Acquisition thesis: capture commercial program management, BPO, contact center, and admin services to offset Federal softness. DHS/CBP pipeline concentrated in TX/FL and drives bilingual contact center demand.</p>
+<p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>Third-party contact center / BPO operators</li><li>Document processing, eligibility determination services</li><li>Admin services with contact center capability</li><li>Multilingual customer service operations (EN/ES particularly)</li><li>Records management, document management firms</li><li>Professional staffing (non-IT) with recurring placements</li></ul>
+<p style="font-size:.85em;margin-top:6px"><strong>Archetype example (illustrative):</strong> "Liberty Response Services" &mdash; 14-year-old contact center and BPO company in San Antonio, TX. $10M revenue, 180 employees. 65% commercial (insurance, utility billing, healthcare appointment scheduling), 20% state/local (TX HHSC benefits hotline, county 311), 15% Federal sub (DHS overflow). 200-seat center + 50-seat DR site, bilingual EN/ES.</p>
+<p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $8-40M revenue sweet spot, 100+ seats, multi-year contracts. <strong>Prefer:</strong> TX, FL, OH, NC, GA. <strong>Pay premium for:</strong> Bilingual EN/ES operations, government contact center experience, DR site / redundancy, low agent turnover (&lt;60% annually), AI/chat deployment capabilities. <strong>Dealbreakers:</strong> agent turnover &gt;100%, facility lease &lt;2 years remaining, pure body-shop staffing model, wage-inflation margin exposure.</p></div>
 
-<div class="brief-section"><h4>Sector 7: Products & Tactical Distribution</h4><ul class="brief-wants"><li>Specialty equipment distributors (telecom, power, UAS)</li><li>Companies with commercial customer base near DLA/GSA supply chains</li><li>GSA schedule holders in equipment/products categories</li><li>Niche distributors with warehouse/logistics infrastructure</li></ul><p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $5-15M specialty equipment distributor, telecom/power/UAS, commercial customers. <strong>Prefer:</strong> Near major DOD logistics hubs. <strong>Bonus:</strong> GSA/DLA schedule access, OEM vendor relationships.</p></div>
+<div class="brief-section"><h4>Sector 7: Products &amp; Tactical Distribution</h4>
+<p style="font-size:.82em;color:var(--dim);margin-bottom:10px"><strong>Market context:</strong> $123B commercial addressable ($5-75M firms), +2.2% CAGR. 7,519 firms in target revenue band (Census SUSB). Forward view (10-Ks): Curtiss-Wright FY25 +12% with FY26 double-digit EPS outlook, L3Harris FY25 +3% ($21.9B revenue, $27.5B orders), Grainger Q2'25 +5.6% industrial distribution.</p>
+<p style="font-size:.9em;margin-bottom:10px"><strong>Strategic rationale:</strong> GC does $633M in Federal products &amp; tactical (86.5% DOD). This is GC's reselling/distribution business, not manufacturing. Major Federal primes (L3Harris, Curtiss-Wright, Mercury) dominate manufacturing &mdash; GC's opportunity is niche distribution with commercial customers. Most sub-segments (Weapons, UAS, Tactical) have no direct commercial analog; focus is equipment distribution (telecom, power, industrial MRO).</p>
+<p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>Specialty equipment distributors (telecom, power, industrial, UAS)</li><li>Companies with commercial customer base near DLA/GSA supply chains</li><li>GSA Schedule holders in equipment/products categories</li><li>Niche distributors with warehouse/logistics infrastructure</li><li>Electronics &amp; communications distributors (commercial IoT/5G)</li></ul>
+<p style="font-size:.85em;margin-top:6px"><strong>Archetype example (illustrative):</strong> "Apex Distribution LLC" &mdash; specialty equipment distributor in Virginia. $12M annual revenue. 60% commercial (telecom, utilities, construction firms), 25% Federal (DLA/GSA schedule sales), 15% state/local. GSA schedule holder; established vendor relationships with major OEMs; warehousing and logistics infrastructure.</p>
+<p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $8-40M revenue sweet spot specialty equipment distributor, telecom/power/industrial, commercial customer base. <strong>Prefer:</strong> Near major DOD logistics hubs (CA, VA, MS, MA, FL). <strong>Pay premium for:</strong> GSA/DLA Schedule access, OEM vendor relationships (Cisco, Dell, Caterpillar, etc.), commercial customer roster, warehouse/logistics infrastructure GC doesn't currently operate. <strong>Dealbreakers:</strong> pure manufacturing (outside operating model), prime-dependency (one DOD prime &gt;40% of revenue), thin-margin commodity distribution with no differentiation.</p></div>
 
-<div class="brief-section"><h4>Sector 8: Travel Services</h4><ul class="brief-wants"><li>Corporate travel management companies (TMCs)</li><li>Companies with GSA travel schedule</li><li>Mid-market corporate travel booking and management</li><li>Travel expense management and policy compliance firms</li></ul><p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $5-10M corporate travel management company, GSA schedule preferred. <strong>Prefer:</strong> Established corporate client base. <strong>Bonus:</strong> Government travel experience, 24/7 support capability.</p></div>
+<div class="brief-section"><h4>Sector 8: Travel Services <span class="zl zl-niche" style="font-size:.75em">NICHE</span></h4>
+<p style="font-size:.82em;color:var(--dim);margin-bottom:10px"><strong>Market context:</strong> $56B commercial addressable ($5-75M firms), +2.2% CAGR. 4,210 firms in target revenue band (Census SUSB). Travel tech market projected $7.1B 2025 &rarr; $15.3B 2035 (+8% CAGR). Sabre FY25 +1% single-segment post-Hospitality sale.</p>
+<p style="font-size:.9em;margin-bottom:10px"><strong>Strategic rationale:</strong> This is a <strong>NICHE zone</strong>. Federal market is tiny ($1.4B), GC has only $5M in Federal travel contracts. Commercial side dominated by OTAs (Booking, Expedia) and GDS operators (Sabre, Amadeus) &mdash; $5-75M firms face flat-to-declining share. <em>Submit travel opportunities only if they complement an existing GC travel operation or offer specific GSA/corporate travel leverage.</em></p>
+<p style="font-size:.9em;margin-bottom:6px"><strong>What we want:</strong></p><ul class="brief-wants"><li>Corporate travel management companies (TMCs) &mdash; B2B only, not consumer</li><li>Companies with GSA travel schedule</li><li>Mid-market corporate travel booking and management</li><li>Travel expense management and policy compliance platforms</li></ul>
+<p style="font-size:.85em;margin-top:6px"><strong>Archetype example (illustrative):</strong> "Horizon Travel Management" &mdash; a corporate travel management company. $7M annual revenue. 70% commercial (mid-market corporate travel management), 20% Federal (GSA schedule, DOD TDY travel), 10% state/local.</p>
+<p style="font-size:.85em;margin-top:6px"><strong>Ideal:</strong> $5-20M corporate travel management company, GSA Schedule preferred. <strong>Prefer:</strong> Established corporate client base, B2B focus. <strong>Pay premium for:</strong> Government travel experience, GSA Schedule holder, 24/7 support capability, expense-management software platform. <strong>Dealbreakers:</strong> consumer-focused OTA model, thin-margin transactional-only, no recurring corporate accounts.</p></div>
 
 <div class="brief-section" style="border-color:var(--r)">
 <h4 style="color:var(--r)">What NOT to Send</h4>
@@ -618,17 +974,71 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 </div>
 
 <div class="brief-section">
+<h4>Deal Structure &amp; Process</h4>
+<table><tr><th>Topic</th><th>GC Approach</th></tr>
+<tr><td><strong>Deal type</strong></td><td>Cash-funded. No financing contingency. Prefer stock purchase; asset structure considered case-by-case.</td></tr>
+<tr><td><strong>Rollover equity</strong></td><td>Available and often preferred for founder/CEO targets. Typically 10&ndash;30% rollover into acquired subsidiary or parent, based on deal-specific circumstances.</td></tr>
+<tr><td><strong>Earnouts</strong></td><td>Tolerated but not preferred. If used, typically 1&ndash;3 year, tied to revenue or EBITDA milestones. Will consider to bridge valuation gaps.</td></tr>
+<tr><td><strong>Management retention</strong></td><td>Baseline assumption: existing leadership stays post-close. Retention agreements typical for founders/CEOs and key technical/sales leadership (2&ndash;4 year terms).</td></tr>
+<tr><td><strong>Integration philosophy</strong></td><td>Standalone subsidiary preserved &mdash; brand, culture, operating autonomy. No forced integration or consolidation. Optional future integration if mutually beneficial.</td></tr>
+<tr><td><strong>Timeline (LOI to close)</strong></td><td>Target 90&ndash;120 days for standard deals. Can move faster for clean/uncomplicated targets. Diligence phase typically 60&ndash;75 days.</td></tr>
+<tr><td><strong>Diligence approach</strong></td><td>Internal GC corp dev team + outside legal / accounting. Standard virtual data room. Specific due diligence for contract vehicles, customer retention, employee agreements, insurance/liability, compliance (SB size, HIPAA, clearances as applicable).</td></tr>
+<tr><td><strong>Valuation methodology</strong></td><td>EBITDA-based with multiple range reflecting commercial %, revenue quality (recurring vs project), growth, customer concentration, Federal concentration. Typical services multiples: 1.0x&ndash;1.5x revenue or 5&ndash;8x EBITDA. Premium for strong commercial MRR and diversified customer base.</td></tr>
+<tr><td><strong>Approval authority</strong></td><td>LOI signed by CEO or VP Corporate Development. Binding purchase agreement requires Board approval (standing M&amp;A committee). Board meets monthly; expedited reviews available.</td></tr>
+<tr><td><strong>NDA / confidentiality</strong></td><td>Mutual NDA available on request &mdash; standard 2-year term. Will execute before target name / financials are shared. [Template available on request to designated GC M&amp;A contact.]</td></tr>
+<tr><td><strong>References</strong></td><td>Prior-deal references available on request to qualified intermediaries. <em>[Note: specific prior acquisition history to be confirmed with GC M&amp;A team before dissemination.]</em></td></tr>
+</table>
+<p style="font-size:.82em;color:var(--dim);margin-top:10px"><em>Note: Specific terms are deal-dependent. The above represents GC's typical approach. Items marked [TBD] or bracketed require confirmation with GC M&amp;A team before final dissemination to sellers.</em></p>
+</div>
+
+<div class="brief-section">
+<h4>Frequently Asked Questions</h4>
+<details open><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: What if the target is currently 60% Federal? Is that a disqualifier?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> Generally yes. GC's primary acquisition objective is commercial diversification &mdash; if a target is already Federal-heavy, it doesn't meaningfully reduce GC's Federal concentration. Exception: if the target has exceptional commercial growth trajectory (e.g., commercial growing 30%+ YoY while Federal is flat), and clear strategy to continue commercial expansion, it may be considered. <strong>Guideline: prefer &le;40% Federal revenue at close; ideal is &lt;30%.</strong></p>
+</details>
+<details><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: Does the target need SBA size certification?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> Not required but preferred where relevant. Under the standalone subsidiary model, a target's existing SB status typically transfers and is preserved, giving GC's portfolio a small business channel. If the target holds specific certifications (8(a), WOSB, SDVOSB, HUBZone), flag these prominently &mdash; they carry premium value.</p>
+</details>
+<details><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: What about key employee retention? Rollover equity for founders?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> Both are standard GC practice. Retention agreements for founders/CEOs and key leadership (2&ndash;4 year terms). Rollover equity typically 10&ndash;30% for founders who want to stay engaged. Earnouts available to bridge valuation gaps. GC's baseline expectation is that existing leadership continues post-close &mdash; we want the team that built the business to keep running it.</p>
+</details>
+<details><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: Can you close in 90 days? What if the target needs to move faster?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> 90&ndash;120 days is standard for a clean target. Expedited process possible for straightforward cases with organized data room. Cash funding means no financing delays. GC has internal M&amp;A team + outside counsel on standby &mdash; we're not building a team per-deal. Board has standing M&amp;A committee that can approve expedited.</p>
+</details>
+<details><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: Do you have a preferred deal structure (asset vs. stock)?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> Stock purchase is preferred for most services businesses &mdash; simpler to preserve contracts, customer relationships, employee agreements, and any specific certifications (SB status, security clearances, industry credentials). Asset purchase considered for cases where there are material legacy liabilities to leave behind. We're flexible based on deal-specific circumstances.</p>
+</details>
+<details><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: What's your typical valuation range?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> 1.0x&ndash;1.5x revenue or 5&ndash;8x trailing EBITDA typical for services targets. Premium (up to 2x revenue) for: strong commercial MRR, diversified customer base, high retention, growth &gt;15% YoY, differentiated IP. Discount for: Federal concentration, customer concentration, declining revenue, thin margins, no recurring revenue. Each deal priced on specific merit &mdash; not a fixed multiple.</p>
+</details>
+<details><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: How do you handle customer and vendor relationships post-close?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> Standalone subsidiary model means customer and vendor relationships are preserved. Acquired company continues operating under its existing brand, contracts, and agreements. No forced rebranding. No customer consolidation. No vendor rationalization without target leadership buy-in. GC adds resources (capital, process, channel access) rather than stripping.</p>
+</details>
+<details><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: What geographies are truly preferred vs. open?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> Technically anywhere in the USA. Preference for Federal hubs (VA/MD/DC, TX, FL, CA, CO, NC, AL) as integration is easier with GC's existing footprint. But a strong commercial business in a non-Fed-hub state (e.g., Illinois, Minnesota, Washington state) would be seriously considered &mdash; we're not going to pass on quality for geography.</p>
+</details>
+<details><summary style="cursor:pointer;font-weight:600;font-size:.92em;color:var(--accent)">Q: Do you do platform acquisitions with a plan for subsequent add-ons?</summary>
+<p style="font-size:.88em;margin-top:8px"><strong>A:</strong> Not in the traditional PE sense (no fund timeline). But GC is open to a platform + tuck-in strategy where a first acquisition anchors a sector and subsequent acquisitions extend geographic or service-line coverage. If a target's management team has a specific roll-up thesis they want to execute, that's a positive &mdash; we'd back it with capital and resources.</p>
+</details>
+</div>
+
+<div class="brief-section">
 <h4>How to Present Opportunities</h4>
+<p style="font-size:.9em;margin-bottom:8px">For each opportunity submission, please include (under NDA):</p>
 <ol style="padding-left:20px;font-size:.9em">
-<li>Company overview (name, location, year founded, employees)</li>
-<li>Revenue (last 3 years, commercial vs. government mix)</li>
-<li>Services description (what they do, for whom)</li>
-<li>Customer profile (types, concentration, recurring vs. project)</li>
-<li>Sector alignment (which of our 8 sectors, what % of revenue)</li>
-<li>Asking price / valuation (if known)</li>
-<li>Owner motivation (retirement, liquidity, growth limitation)</li>
-<li>Your fit assessment</li>
+<li><strong>Company overview</strong> &mdash; name, location, year founded, employee count, legal structure</li>
+<li><strong>Revenue profile</strong> &mdash; last 3 years annual revenue, current-year run-rate, commercial/Federal/S&amp;L mix (%)</li>
+<li><strong>Services description</strong> &mdash; what they do, for whom, in what geographies</li>
+<li><strong>Customer profile</strong> &mdash; number of customers, top-5 concentration (%), recurring vs. project, average customer tenure</li>
+<li><strong>Sector alignment</strong> &mdash; which of GC's 8 sectors, estimated % of revenue in GC-connectable sector</li>
+<li><strong>Financial metrics</strong> &mdash; EBITDA, EBITDA margin, revenue growth YoY (last 3 years), recurring revenue %</li>
+<li><strong>Asking price / valuation</strong> &mdash; if set, or seller's expectation range</li>
+<li><strong>Owner motivation</strong> &mdash; retirement, liquidity event, growth constrained by capital, burnout</li>
+<li><strong>Deal structure preferences</strong> &mdash; stock vs asset, willingness to accept rollover / earnout</li>
+<li><strong>Key risks</strong> &mdash; customer concentration, key-person risk, pending litigation, material contracts expiring</li>
+<li><strong>Your fit assessment</strong> &mdash; broker's view on why this fits GC's thesis</li>
 </ol>
+<p style="font-size:.85em;margin-top:10px;color:var(--dim)"><strong>Response time commitment:</strong> Initial feedback (interested / not interested / need more info) within 5 business days of NDA + teaser. IOI within 15 business days if advancing. LOI within 30 business days of accepted IOI.</p>
 </div>
 </div>
 
@@ -640,8 +1050,8 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <p class="sdesc"><strong>Stakeholder feedback requested.</strong> These assumptions drive the analysis. Flag anything that needs adjusting &mdash; changes will shift rankings and target profiles.</p>
 
 <div class="pg">
-<div class="pc"><div class="pk">Purchase Price Ceiling</div><div class="pv">~$25M (soft)</div><div class="pn">Flexible for the right target.</div></div>
-<div class="pc"><div class="pk">Target Revenue Range</div><div class="pv">$5M &ndash; $25M annual</div><div class="pn">Established businesses only.</div></div>
+<div class="pc"><div class="pk">Max Purchase Price / EV</div><div class="pv">$5M &ndash; $75M</div><div class="pn">Budget parameter. Typical 1.0x-1.5x revenue for services.</div></div>
+<div class="pc"><div class="pk">Target Firm Annual Revenue</div><div class="pv">$5M &ndash; $75M</div><div class="pn">Drives Commercial Addressable Market sizing. Established businesses only.</div></div>
 <div class="pc"><div class="pk">Min. GC-Connectable Revenue</div><div class="pv">&ge;25% in a GC-relevant sector</div><div class="pn">Remaining 75% can be unrelated &mdash; that's the diversification.</div></div>
 <div class="pc"><div class="pk">Revenue Mix</div><div class="pv">Primarily commercial</div><div class="pn">Some Federal/S&L OK. NOT seeking more Federal-heavy companies.</div></div>
 <div class="pc"><div class="pk">Business Maturity</div><div class="pv">&ge;5 years operating</div><div class="pn">Proven revenue. No startups or hype-cycle businesses.</div></div>
@@ -670,12 +1080,73 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <tr><td>USAspending</td><td>$944B Federal contracts, 75 NAICS, classified by sector/geography/agency</td><td>FY2022-2026</td><td><span class="tag th">High</span></td></tr>
 <tr><td>GC Contracts</td><td>658 GOLD CREEK contracts &mdash; agency relationships, capabilities</td><td>FY2022-present</td><td><span class="tag th">High</span></td></tr>
 <tr><td>Govwin</td><td>9,854 upcoming Federal opportunities &mdash; pipeline, set-aside, vehicles</td><td>Apr 2026 - Dec 2029</td><td><span class="tag th">High</span></td></tr>
-<tr><td>Census SUSB</td><td>Firm counts by NAICS and revenue band (real $5-25M counts)</td><td>2022</td><td><span class="tag th">High</span></td></tr>
+<tr><td>Census SUSB</td><td>Firm counts + receipts by NAICS and revenue band ($5-75M band for Target Firms and Addressable Market)</td><td>2022 (prior: 2017 for 5-yr CAGR)</td><td><span class="tag th">High</span></td></tr>
 <tr><td>BLS QCEW</td><td>County-level employment by NAICS</td><td>2023 Annual</td><td><span class="tag th">High</span></td></tr>
 <tr><td>SAM.gov / SBA</td><td>Federal-registered small business entity counts</td><td>Apr 2026</td><td><span class="tag tm">Medium</span> (SB only)</td></tr>
 <tr><td>Industry Reports</td><td>Commercial market sizes &mdash; Mordor, Grand View, IMARC, Precedence, IBISWorld</td><td>2024-2025</td><td><span class="tag tm">Medium</span></td></tr>
 <tr><td>GC Internal</td><td>Contract vehicles (8), capabilities (8 categories)</td><td>Apr 2026</td><td><span class="tag th">High</span></td></tr>
 </table>
+</div>
+
+<div class="section" id="confidence-signal-definitions">
+<div class="stitle">Confidence and Signal Definitions</div>
+<p class="sdesc">Every number on this dashboard carries a confidence level and, where relevant, a signal tag. These criteria are applied consistently. If you want to know why something is labeled Medium vs High, or why a sub-segment shows WARM vs STABLE, these definitions are the answer.</p>
+
+<details open><summary>Data Confidence Levels (H / M / L)</summary><div class="dbody">
+<p style="font-size:.9em;margin-bottom:10px">Applied to every quantitative figure on the dashboard. The criteria differ slightly for Federal and Commercial because the underlying data pipelines are different.</p>
+
+<p style="font-size:.9em;margin-bottom:4px;font-weight:700;color:var(--accent)">Federal figures (sourced from USAspending):</p>
+<table style="margin-bottom:14px"><tr><th>Level</th><th>Criteria</th><th>Examples</th></tr>
+<tr><td><span class="conf conf-h">H</span> High</td><td>Direct NAICS (Track A) with specific keyword match (Track B) <strong>OR</strong> aggregated Federal totals from USAspending</td><td>Federal Market $197B; Cybersecurity sub-segment (specific terms: SOC, SIEM, zero trust); Cloud &amp; Data Center (specific terms: AWS, Azure, cloud)</td></tr>
+<tr><td><span class="conf conf-m">M</span> Medium</td><td>Keyword classification with some overlap to other categories <strong>OR</strong> residual ("everything else") category within Track B</td><td>IT General (residual IT work); Network Infrastructure (overlaps with IT General); Help Desk (broad term)</td></tr>
+<tr><td><span class="conf conf-l">L</span> Low</td><td>Proxy used; no direct keyword match; parent NAICS only</td><td>Sub-segments where no reliable classification keyword exists</td></tr>
+</table>
+
+<p style="font-size:.9em;margin-bottom:4px;font-weight:700;color:var(--g)">Commercial figures (sourced from Census SUSB / Economic Census / BEA / BLS):</p>
+<table><tr><th>Level</th><th>Criteria</th><th>Examples</th></tr>
+<tr><td><span class="conf conf-h">H</span> High / Tier A</td><td>Direct NAICS match to Census SUSB receipts data <strong>or</strong> blend of 2-3 closely related NAICS. No estimation or industry split required.</td><td>Software Licensing &amp; SaaS (NAICS 511210); Cloud &amp; Data Center (518210); App Development (541511)</td></tr>
+<tr><td><span class="conf conf-m">M</span> Medium / Tier B</td><td>Parent NAICS used with documented industry-report split factor to estimate sub-segment share. Split factor cited with publisher name.</td><td>Cybersecurity (541512 parent &times; cyber % per Gartner); Health IT &amp; EHR (541512 parent &times; health vertical % per HIMSS)</td></tr>
+<tr><td><span class="conf conf-l">L</span> Low / Tier C</td><td>Proxy NAICS used; no direct data available; figure reflects a closely-related category used as best-available substitute.</td><td>Network Infrastructure (541512 proxy; native NAICS 517xxx not yet pulled)</td></tr>
+</table>
+
+<p style="font-size:.85em;color:var(--dim);margin-top:10px"><strong>Shelf-life rule:</strong> Figures older than 18 months (forward-view projections from consulting reports) auto-downgrade one level. Primary government data does not expire but should be refreshed annually.</p>
+</div></details>
+
+<details><summary>Signal Tags (WARM / STABLE / COOL) &mdash; Sub-Segment Level</summary><div class="dbody">
+<p style="font-size:.9em;margin-bottom:8px">Applied to each sub-segment row. Derived directly from the Addressable CAGR of that sub-segment, using fixed thresholds.</p>
+<table><tr><th>Signal</th><th>Threshold</th><th>Meaning</th></tr>
+<tr><td><span class="sig sig-warm">WARM</span></td><td>Addressable CAGR <strong>&ge; +5% per year</strong></td><td>Growing market. The slice of demand GC's acquisition target would compete for is expanding.</td></tr>
+<tr><td><span class="sig sig-stable">STABLE</span></td><td><strong>-5% to +5% per year</strong></td><td>Flat market. Not shrinking, not meaningfully growing. Still acquisition-viable if other factors (fragmentation, durability) are strong.</td></tr>
+<tr><td><span class="sig sig-cool">COOL</span></td><td>Addressable CAGR <strong>&lt; -5% per year</strong></td><td>Declining market. Real headwinds. Acquisition possible but thesis must explain why the target avoids the decline.</td></tr>
+</table>
+<p style="font-size:.85em;color:var(--dim);margin-top:10px"><strong>Why &plusmn;5%?</strong> Below +5% CAGR, revenue growth barely beats general wage inflation and GDP. A sub-segment at +3% is effectively flat in real terms. Above -5% decline, a firm can still manage through with operational efficiency. Below -5%, decline is structural.</p>
+<p style="font-size:.85em;color:var(--dim);margin-top:6px"><strong>Federal signals</strong> use FY22-FY25 Addressable CAGR (contracts &lt;$250M). <strong>Commercial signals</strong> use 5-year Census SUSB 2017-2022 Addressable CAGR ($5-75M firm band).</p>
+</div></details>
+
+<details><summary>Zone Labels (WARM / COOL / NICHE) &mdash; Zone Level</summary><div class="dbody">
+<p style="font-size:.9em;margin-bottom:8px">Applied to each capability zone card. Derived from overall zone assessment, not a single CAGR.</p>
+<table><tr><th>Label</th><th>Criteria</th></tr>
+<tr><td><span class="zl zl-warm">WARM</span></td><td>Positive Federal Addr. CAGR overall, OR strong commercial CAGR that supports the acquisition thesis, OR significant pipeline/durability advantages despite mixed CAGR. Sector worth prioritizing.</td></tr>
+<tr><td><span class="zl zl-cool">COOL</span></td><td>Declining Federal Addr. CAGR overall AND limited forward-looking signals to offset. Sector possible but not priority.</td></tr>
+<tr><td><span class="zl zl-niche">NICHE</span></td><td>Federal market size too small (&lt;$5B typically) to be a primary lane, even if growth is strong. Complementary acquisition only.</td></tr>
+</table>
+<p style="font-size:.85em;color:var(--dim);margin-top:10px">Zone labels are <strong>judgment calls</strong> that consider CAGR, commercial opportunity, pipeline, GC's existing footprint, and durability together. Sub-segment signals are mechanical (threshold-based); zone labels are contextual.</p>
+</div></details>
+
+<details><summary>Momentum Tags (&uarr; Accelerating / &rarr; Steady / &darr; Decelerating)</summary><div class="dbody">
+<p style="font-size:.9em;margin-bottom:8px">Forward-looking synthesis. Applied at the zone level (and eventually sub-segment level). Derived from comparing three time horizons:</p>
+<ul class="bullets" style="font-size:.9em;margin-bottom:8px">
+<li><strong>Layer 1 (Trailing):</strong> Census SUSB 2017-2022 5-year CAGR &mdash; what the market did historically</li>
+<li><strong>Layer 2 (Current):</strong> BLS QCEW 2022-2024 2-year employment + wage CAGR &mdash; is momentum accelerating or decelerating right now?</li>
+<li><strong>Layer 3 (Forward):</strong> Public 10-Ks, Gartner/Deloitte/McKinsey free reports, trade association outlooks &mdash; what do industry leaders project for next 1-2 years?</li>
+</ul>
+<table><tr><th>Tag</th><th>Criteria</th></tr>
+<tr><td><span class="mom mom-up">&uarr;</span> Accelerating</td><td>Layer 2 stronger than Layer 1 <strong>AND</strong> Layer 3 sources positive</td></tr>
+<tr><td><span class="mom mom-flat">&rarr;</span> Steady</td><td>Layer 2 roughly matches Layer 1 trajectory</td></tr>
+<tr><td><span class="mom mom-down">&darr;</span> Decelerating</td><td>Layer 2 weaker than Layer 1 <strong>OR</strong> Layer 3 sources cautious</td></tr>
+</table>
+<p style="font-size:.85em;color:var(--dim);margin-top:10px">Every momentum tag cites its Layer 3 sources (e.g., "Gartner Feb 2026, CompTIA 2026 Outlook"). No Layer 3 input is used without publisher + date citation. See <code>research/data/sources-registry.md</code> for the full source log.</p>
+</div></details>
 </div>
 
 <div class="section">
@@ -695,7 +1166,7 @@ footer{text-align:center;padding:24px 0;border-top:1px solid var(--border);color
 <details><summary>Equal-Weight Principle</summary><div class="dbody"><p style="font-size:.9em">Federal spending data is used for <strong>context and validation</strong> &mdash; to confirm real demand and identify geographic concentrations. It is NOT used to rank sector priority. All 8 GC capability categories start on equal footing. A $5B sector with exceptional growth may rank higher than a $50B sector with flat trends.</p></div></details>
 <details><summary>"Warm Not Hot" Standard</summary><div class="dbody"><p style="font-size:.9em">Targets must be in sectors with established, durable demand &mdash; not hype cycles, policy spikes, or unscaled emerging tech. <strong>Yes:</strong> PFAS remediation, IT managed services, facilities maintenance. <strong>No:</strong> AI startups, drone companies, pandemic-driven health spending.</p></div></details>
 <details><summary>Cross-Cutting Screening Filters</summary><div class="dbody"><table><tr><th>Filter</th><th>Requirement</th></tr>
-<tr><td>Purchase price</td><td>&le;$25M (soft ceiling)</td></tr><tr><td>Annual revenue</td><td>$5M-$25M</td></tr><tr><td>Min. GC-connectable</td><td>&ge;25% in a GC-relevant sector</td></tr><tr><td>Business maturity</td><td>&ge;5 years, established customer base</td></tr><tr><td>Revenue stability</td><td>No single customer >25-30%</td></tr><tr><td>Growth</td><td>Stable or growing</td></tr><tr><td>"Warm not hot"</td><td>Established sector, durable demand</td></tr><tr><td>Owner motivation</td><td>Liquidity event, retirement, or growth-limited-by-scale</td></tr><tr><td>Clean financials</td><td>GAAP or GAAP-ready; no material litigation</td></tr><tr><td>Integration readiness</td><td>Defined processes, not founder-dependent</td></tr></table></div></details>
+<tr><td>Purchase price / EV</td><td>$5M-$75M (1.0x-1.5x revenue typical)</td></tr><tr><td>Annual revenue</td><td>$5M-$75M</td></tr><tr><td>Min. GC-connectable</td><td>&ge;25% in a GC-relevant sector</td></tr><tr><td>Business maturity</td><td>&ge;5 years, established customer base</td></tr><tr><td>Revenue stability</td><td>No single customer >25-30%</td></tr><tr><td>Growth</td><td>Stable or growing</td></tr><tr><td>"Warm not hot"</td><td>Established sector, durable demand</td></tr><tr><td>Owner motivation</td><td>Liquidity event, retirement, or growth-limited-by-scale</td></tr><tr><td>Clean financials</td><td>GAAP or GAAP-ready; no material litigation</td></tr><tr><td>Integration readiness</td><td>Defined processes, not founder-dependent</td></tr></table></div></details>
 </div>
 
 <div class="section">
@@ -786,9 +1257,22 @@ new Chart(document.getElementById('vehicleGapChart'),{type:'bar',data:{labels:['
 new Chart(document.getElementById('fedMarketChart'),{type:'bar',data:{labels:wzL,datasets:[{label:'Federal Market FY22-26 ($B)',data:[197,104,24,10,24,27,29,1.4],backgroundColor:wzC.map(c=>c+'99'),borderColor:wzC,borderWidth:2,borderRadius:6}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:C.border},ticks:{callback:v=>'$'+v+'B'}},y:{grid:{display:false}}}}});
 
 new Chart(document.getElementById('cagrChart'),{type:'bar',data:{labels:wzL,datasets:[
-{label:'Addressable Federal CAGR',data:[4.8,2.0,5.5,-4.6,-14.5,-6.3,7.7,29.9],backgroundColor:wzC.map(c=>c+'99'),borderColor:wzC,borderWidth:2,borderRadius:6},
-{label:'Commercial CAGR',data:[10.5,6,6.5,7.8,13.9,14.6,4,8],backgroundColor:wzC.map(c=>c+'44'),borderColor:wzC.map(c=>c+'88'),borderWidth:2,borderRadius:6}
+{label:'Addressable Federal CAGR (FY22-26)',data:[4.8,2.0,5.5,-4.6,-14.5,-6.3,7.7,29.9],backgroundColor:wzC.map(c=>c+'99'),borderColor:wzC,borderWidth:2,borderRadius:6},
+{label:'Addressable Commercial CAGR (2017-2022, Census SUSB)',data:[8.0,6.2,6.3,5.0,3.5,5.2,2.2,2.2],backgroundColor:wzC.map(c=>c+'44'),borderColor:wzC.map(c=>c+'88'),borderWidth:2,borderRadius:6}
 ]},options:{responsive:true,plugins:{legend:{labels:{boxWidth:12}}},scales:{x:{grid:{display:false}},y:{grid:{color:C.border},ticks:{callback:v=>v+'%'},suggestedMin:-16,suggestedMax:32}}}});
+
+// Commercial Market Size chart (Full vs Addressable horizontal bar)
+new Chart(document.getElementById('commMarketChart'),{type:'bar',data:{labels:wzL,datasets:[
+{label:'Commercial Full Market ($B, 2022)',data:[1609,1912,177,556,2161,1062,1141,275],backgroundColor:wzC.map(c=>c+'44'),borderColor:wzC.map(c=>c+'88'),borderWidth:2,borderRadius:6},
+{label:'Commercial Addressable Market $5-75M ($B, 2022)',data:[253,634,45,41,264,256,123,56],backgroundColor:wzC.map(c=>c+'cc'),borderColor:wzC,borderWidth:2,borderRadius:6}
+]},options:{indexAxis:'y',responsive:true,plugins:{legend:{labels:{boxWidth:12}}},scales:{x:{grid:{color:C.border},ticks:{callback:v=>'$'+v+'B'}},y:{grid:{display:false}}}}});
+
+// Commercial Addressable CAGR chart
+new Chart(document.getElementById('commCagrChart'),{type:'bar',data:{labels:wzL,datasets:[{label:'Commercial Addressable CAGR (2017-2022)',data:[8.0,6.2,6.3,5.0,3.5,5.2,2.2,2.2],backgroundColor:wzC.map(c=>c+'99'),borderColor:wzC,borderWidth:2,borderRadius:6}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:C.border},ticks:{callback:v=>v+'%'},suggestedMin:0,suggestedMax:10},y:{grid:{display:false}}}}});
+
+// Target Firm Density chart
+new Chart(document.getElementById('targetFirmsChart'),{type:'bar',data:{labels:wzL,datasets:[{label:'Target Firms ($5-75M revenue band, Census SUSB 2022)',data:[15890,43285,3338,3298,17528,18969,7519,4210],backgroundColor:wzC.map(c=>c+'99'),borderColor:wzC,borderWidth:2,borderRadius:6}]},options:{indexAxis:'y',responsive:true,plugins:{legend:{display:false}},scales:{x:{grid:{color:C.border},ticks:{callback:v=>v.toLocaleString()}},y:{grid:{display:false}}}}});
+
 </script>
 </body>
 </html>
