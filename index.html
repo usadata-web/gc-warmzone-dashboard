@@ -179,6 +179,7 @@ table.split td.c-div{border-left:2px solid rgba(34,211,167,.3)}
 <div class="tab-btn" onclick="showTab('market')">Market Landscape</div>
 <div class="tab-btn" onclick="showTab('broker')">Broker Brief</div>
 <div class="tab-btn" onclick="showTab('params')">Parameters & Methods</div>
+<div class="tab-btn" onclick="showTab('ailens')" style="color:#fb923c">AI Resilience <span style="background:#fb923c33;border:1px solid #fb923c66;color:#fb923c;font-size:.65em;padding:1px 5px;border-radius:8px;margin-left:3px;font-weight:700;letter-spacing:.5px">DRAFT</span></div>
 </div>
 
 <div class="wrap">
@@ -1538,6 +1539,229 @@ table.split td.c-div{border-left:2px solid rgba(34,211,167,.3)}
 </div>
 </div>
 </div>
+
+<!-- ================================================================ -->
+<!-- TAB 6: AI RESILIENCE (DRAFT — FOR LEADERSHIP REVIEW) -->
+<!-- ================================================================ -->
+<div id="tab-ailens" class="tab-panel">
+
+<div class="caveat" style="border-color:#fb923c;background:rgba(251,146,60,.08);margin-bottom:24px">
+<strong style="color:#fb923c">⚠ DRAFT &mdash; FOR LEADERSHIP REVIEW.</strong>
+This tab proposes an exploratory <strong>third filter</strong> for acquisition targeting (alongside the existing durability and GC-capability filters). It is <strong>NOT yet integrated</strong> into composite scoring or zone rankings &mdash; the rest of the dashboard is unchanged. The framework is presented here for review and feedback before any action is taken.
+</div>
+
+<div class="stitle" style="color:#fb923c;border-color:#fb923c">AI Resilience &mdash; Physical-Durable Acquisition Lens</div>
+<p class="sdesc wide"><strong>Memo for leadership review &middot; April 2026 &middot; Decision pending.</strong> A standalone version of this analysis is also saved at <code>research/physical-durable-acquisition-lens.md</code> for offline review.</p>
+
+<!-- ============== SECTION 1: THE THESIS ============== -->
+<div class="section">
+<div class="stitle">The Thesis</div>
+<p class="sdesc wide">AI is rapidly compressing the cost of <em>cognitive, digital, and document-based</em> services on a 5&ndash;10 year horizon while leaving <em>physical execution</em> largely untouched. Companies whose value-add requires hands-on labor, physical objects, on-site presence, or hands-on care of people are <strong>durably differentiated</strong>; companies whose value is primarily cognitive or document-based face <strong>commoditization risk</strong>. Two filters already shape acquisition targeting: durability ("warm not hot") and GC-capability fit (&ge;25% in a relevant zone). This proposes a third: <strong>AI resilience</strong>.</p>
+
+<div class="caveat" style="margin-top:8px;background:rgba(34,211,167,.06);border-color:#22d3a7">
+<strong style="color:#22d3a7">📐 Discriminating test:</strong>&nbsp; <em>"Could an AI agent or AI-augmented worker plausibly deliver 50%+ of this revenue in five years?"</em>&nbsp; If <strong>yes</strong> &rarr; AI-vulnerable. If <strong>no</strong> &rarr; physical-durable.
+</div>
+</div>
+
+<!-- ============== SECTION 2: THE THREE-TIER FRAMEWORK ============== -->
+<div class="section">
+<div class="stitle">The Three-Tier Framework</div>
+<div class="wz-grid" style="grid-template-columns:repeat(3,1fr)">
+
+<div class="wz-c" style="border-left:4px solid #22d3a7">
+<div class="rk" style="color:#22d3a7">Tier 1 &middot; Physical-Durable</div>
+<h3>Hands-On Physical Execution <span class="zl" style="background:#22d3a722;color:#22d3a7;border:1px solid #22d3a766">T1</span></h3>
+<p style="font-size:.88em;margin-bottom:10px">Revenue requires <strong>physical execution</strong> &mdash; hands-on labor, physical objects, on-site presence, or hands-on care of people. Worker shows up at a site, touches an object or a person, produces or maintains something tangible.</p>
+<p style="font-size:.85em;font-weight:700;margin-bottom:4px">Best-fit examples:</p>
+<ul class="bullets" style="font-size:.83em">
+<li>Industrial O&amp;M / turnaround / mechanical integrity</li>
+<li>HVAC, electrical, plumbing, mechanical trades</li>
+<li>Machine shops &amp; precision fabrication</li>
+<li>Long-term care, home health, direct patient care</li>
+<li>Environmental remediation, MRF / specialty recycling</li>
+<li>Mining services, drilling, sample-based labs</li>
+<li>Construction &amp; installation (utility T&amp;D, MEP)</li>
+<li>Distribution + warehousing infrastructure</li>
+<li>Janitorial, grounds, pest control, security</li>
+<li>Data-center construction &amp; field MEP services</li>
+</ul>
+</div>
+
+<div class="wz-c" style="border-left:4px solid #fb923c">
+<div class="rk" style="color:#fb923c">Tier 2 &middot; Hybrid</div>
+<h3>Physical Anchor + Cognitive Work <span class="zl" style="background:#fb923c22;color:#fb923c;border:1px solid #fb923c66">T2</span></h3>
+<p style="font-size:.88em;margin-bottom:10px">Mix of physical anchor (regulated PE/PG stamp, on-site fieldwork, hardware, certification) <strong>and</strong> cognitive/document work that AI compresses. Physical component preserves a moat; cognitive component is partially exposed.</p>
+<p style="font-size:.85em;font-weight:700;margin-bottom:4px">Best-fit examples:</p>
+<ul class="bullets" style="font-size:.83em">
+<li>A&amp;E design (PE-stamped drawings + CAD work)</li>
+<li>Environmental consulting (Phase I/II + permitting)</li>
+<li>Audit / FIAR (fieldwork + document work)</li>
+<li>Clinical staffing (physical placements + admin)</li>
+<li>Ground-station operations (hardware + sw)</li>
+<li>Equipment distribution + engineering services</li>
+<li>Specialty energy services (install + modeling)</li>
+<li>Cybersecurity (physical IR + cleared engineers)</li>
+</ul>
+</div>
+
+<div class="wz-c" style="border-left:4px solid #ff6b6b">
+<div class="rk" style="color:#ff6b6b">Tier 3 &middot; AI-Vulnerable</div>
+<h3>Cognitive / Digital / Document Work <span class="zl" style="background:#ff6b6b22;color:#ff6b6b;border:1px solid #ff6b6b66">T3</span></h3>
+<p style="font-size:.88em;margin-bottom:10px">Primarily <strong>cognitive, digital, or document-based</strong> work. Output is reports, code, transactions, conversations, recommendations, or policy/process artifacts. Highly susceptible to AI displacement.</p>
+<p style="font-size:.85em;font-weight:700;margin-bottom:4px">Best-fit examples:</p>
+<ul class="bullets" style="font-size:.83em">
+<li>Help desk, MSP / RMM, tier-1 SOC monitoring</li>
+<li>Software development, app dev, DevOps</li>
+<li>ERP / EHR implementation consulting</li>
+<li>BPO, contact center, document processing</li>
+<li>Strategy / management consulting</li>
+<li>Tax prep, payroll, bookkeeping</li>
+<li>Records management, eDiscovery</li>
+<li>Travel agency, expense mgmt platforms</li>
+<li>Marketing services, content production</li>
+</ul>
+</div>
+
+</div>
+</div>
+
+<!-- ============== SECTION 3: ZONE-BY-ZONE TIER MIX ============== -->
+<div class="section">
+<div class="stitle">Tier Mix by Zone</div>
+<p class="sdesc wide">Estimated share of each zone's commercial revenue that falls into each tier. Most zones are mixed &mdash; the right granularity for this lens is the <em>sub-segment</em>, not the zone. Below is the rough zone-level estimate; sub-segment tagging would happen on Tab 2 if leadership chooses to integrate.</p>
+<div class="table-wrap">
+<table>
+<tr><th>Zone</th><th class="n" style="color:#22d3a7">T1 Physical-Durable</th><th class="n" style="color:#fb923c">T2 Hybrid</th><th class="n" style="color:#ff6b6b">T3 AI-Vulnerable</th><th>T1-Heavy Sub-Segments</th></tr>
+<tr><td><strong>Industrial O&amp;M</strong> (Z9)</td><td class="n hi">~95%</td><td class="n">~5%</td><td class="n">~0%</td><td>Machine shops, turnaround crews, O&amp;G ops support, rail support</td></tr>
+<tr><td><strong>Facilities</strong> (Z2)</td><td class="n hi">~80%</td><td class="n">~10%</td><td class="n">~10%</td><td>HVAC, electrical, plumbing, janitorial, grounds, base ops</td></tr>
+<tr><td><strong>Critical Minerals</strong> (Z10)</td><td class="n hi">~70%</td><td class="n">~30%</td><td class="n">~0%</td><td>Drilling, geophysical, testing labs, mine services</td></tr>
+<tr><td><strong>Environmental</strong> (Z3)</td><td class="n">~60%</td><td class="n">~30%</td><td class="n">~10%</td><td>Remediation, recycling/MRF, ESPC install crews</td></tr>
+<tr><td><strong>Products &amp; Tactical</strong> (Z7)</td><td class="n">~50%</td><td class="n">~30%</td><td class="n">~20%</td><td>Distribution + warehousing infrastructure, niche manufacturing</td></tr>
+<tr><td><strong>Space Services</strong> (Z11)</td><td class="n">~50%</td><td class="n">~30%</td><td class="n">~20%</td><td>Ground stations, hardware ops &mdash; but $5-75M lane is thin</td></tr>
+<tr><td><strong>Health</strong> (Z6)</td><td class="n">~40%</td><td class="n">~30%</td><td class="n">~30%</td><td>LTC services, home health, diagnostic labs, clinical staffing</td></tr>
+<tr><td><strong>IT / Cyber</strong> (Z1)</td><td class="n">~5%</td><td class="n">~25%</td><td class="n hi" style="color:#ff6b6b">~70%</td><td>Cleared on-site engineers, hardware-anchored cyber niches only</td></tr>
+<tr><td><strong>Financial Mgmt</strong> (Z4)</td><td class="n">~5%</td><td class="n">~30%</td><td class="n hi" style="color:#ff6b6b">~65%</td><td>Audit/FIAR fieldwork (T2); core ERP/tax/payroll all T3</td></tr>
+<tr><td><strong>PM / Admin</strong> (Z5)</td><td class="n">~5%</td><td class="n">~15%</td><td class="n hi" style="color:#ff6b6b">~80%</td><td>Almost no T1 footprint</td></tr>
+<tr><td><strong>Travel</strong> (Z8)</td><td class="n">~5%</td><td class="n">~10%</td><td class="n hi" style="color:#ff6b6b">~85%</td><td>Almost no T1 footprint</td></tr>
+</table>
+</div>
+<p style="font-size:.78em;color:var(--dim);margin-top:6px"><em>Tier shares are analyst estimates based on dominant sub-segment composition, not formula-derived. Final tier tagging should happen at the sub-segment level.</em></p>
+</div>
+
+<!-- ============== SECTION 4: IMPACT ON RANKINGS ============== -->
+<div class="section">
+<div class="stitle">Impact on Current Rankings</div>
+<p class="sdesc wide">Side-by-side comparison: <strong>current 8-dimension composite ranking</strong> versus a <strong>T1-priority alternative ranking</strong> (sorted purely by T1 share). The contrast surfaces what changes if AI-resilience becomes a primary criterion.</p>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:12px">
+
+<div>
+<h4 style="color:var(--accent);margin-bottom:8px">Current Composite Ranking</h4>
+<table>
+<tr><th>#</th><th>Zone</th><th class="n">Score</th></tr>
+<tr><td>1</td><td>IT / Cyber</td><td class="n hi">35</td></tr>
+<tr><td>2</td><td>Facilities</td><td class="n hi">35</td></tr>
+<tr><td>3</td><td>Financial</td><td class="n">30</td></tr>
+<tr><td>4</td><td>Industrial O&amp;M</td><td class="n">25</td></tr>
+<tr><td>5</td><td>Environmental</td><td class="n">24</td></tr>
+<tr><td>6</td><td>Health</td><td class="n">23</td></tr>
+<tr><td>7</td><td>PM / Admin</td><td class="n">22</td></tr>
+<tr><td>8</td><td>Products</td><td class="n">22</td></tr>
+<tr><td>9</td><td>Space</td><td class="n">15</td></tr>
+<tr><td>10</td><td>Travel</td><td class="n">15</td></tr>
+<tr><td>11</td><td>Critical Minerals</td><td class="n">14</td></tr>
+</table>
+</div>
+
+<div>
+<h4 style="color:#fb923c;margin-bottom:8px">T1-Priority Alternative Ranking</h4>
+<table>
+<tr><th>#</th><th>Zone</th><th class="n">T1 Share</th><th class="n">&Delta;</th></tr>
+<tr><td>1</td><td>Industrial O&amp;M</td><td class="n hi">~95%</td><td class="n pos">+3</td></tr>
+<tr><td>2</td><td>Facilities</td><td class="n hi">~80%</td><td class="n pos">&plusmn;0</td></tr>
+<tr><td>3</td><td>Critical Minerals</td><td class="n hi">~70%</td><td class="n pos" style="color:#22d3a7">+8</td></tr>
+<tr><td>4</td><td>Environmental</td><td class="n">~60%</td><td class="n pos">+1</td></tr>
+<tr><td>5T</td><td>Products</td><td class="n">~50%</td><td class="n pos">+3</td></tr>
+<tr><td>5T</td><td>Space</td><td class="n">~50%</td><td class="n pos">+4</td></tr>
+<tr><td>7</td><td>Health</td><td class="n">~40%</td><td class="n">&minus;1</td></tr>
+<tr><td>8T</td><td>IT / Cyber</td><td class="n">~25%</td><td class="n neg" style="color:#ff6b6b">&minus;7</td></tr>
+<tr><td>8T</td><td>Financial</td><td class="n">~25%</td><td class="n neg" style="color:#ff6b6b">&minus;5</td></tr>
+<tr><td>10T</td><td>PM / Admin</td><td class="n">~10%</td><td class="n neg">&minus;3</td></tr>
+<tr><td>10T</td><td>Travel</td><td class="n">~10%</td><td class="n">&plusmn;0</td></tr>
+</table>
+</div>
+
+</div>
+
+<div style="margin-top:14px;padding:14px 16px;background:rgba(251,146,60,.06);border:1px solid rgba(251,146,60,.25);border-radius:8px">
+<p style="font-size:.9em;margin-bottom:8px"><strong style="color:#fb923c">📊 Notable shifts under a T1-priority lens:</strong></p>
+<ul class="bullets" style="font-size:.88em">
+<li><strong>Industrial O&amp;M jumps from #4 to #1.</strong> Already strongest on Federal CAGR (+26.7%) and SB Set-Aside (50%); pure T1 fit reinforces the case.</li>
+<li><strong>Critical Minerals jumps from #11 to #3.</strong> The biggest single re-rank &mdash; a FRONTIER zone that's small on trailing data but T1-heavy and policy-driven.</li>
+<li><strong>IT / Cyber falls from #1 to #8 tied.</strong> The biggest loss &mdash; ~70% T3 (help desk, app dev, ERP). A pure-T1 lens would deprioritize one of GC's strongest existing zones.</li>
+<li><strong>Financial falls from #3 to #8 tied.</strong> Tax / payroll / ERP are heavily AI-vulnerable. Audit / FIAR fieldwork (T2) is the only durable sub-segment.</li>
+<li><strong>Space rises (#9 &rarr; #5T).</strong> The hardware / ground-station fraction is T1, though the $5-75M lane remains thin.</li>
+<li><strong>Travel stays at #10.</strong> Already low priority; the lens just reaffirms it.</li>
+</ul>
+</div>
+</div>
+
+<!-- ============== SECTION 5: HONEST TENSION ============== -->
+<div class="section">
+<div class="stitle">The Honest Tension</div>
+<div class="caveat" style="border-color:var(--y);background:rgba(255,217,61,.05)">
+<p style="margin-bottom:8px"><strong style="color:var(--y)">⚠ The hard truth:</strong> GC's existing $500&ndash;600M business is concentrated in T3 zones. IT/Cyber, PM/Admin, and Financial together represent <strong>~$1.55B of GC's $2.6B Federal contract footprint</strong> over FY22-26. A pure T1-priority lens would deprioritize most of what GC currently does.</p>
+<p style="margin-bottom:8px"><strong>But applying this filter to <em>new acquisitions</em> does not imply divesting existing business.</strong> It suggests deploying acquisition capital toward a <strong>portfolio hedge</strong> against AI compression &mdash; which actually <em>reinforces</em> the existing diversification mandate. We are already directing acquisition capital away from Federal-heavy cognitive services. The AI lens sharpens <em>which commercial businesses</em> are most worth buying.</p>
+<p><strong style="color:#22d3a7">📌 Reassuring overlap:</strong> The T1-prioritized shortlist substantially overlaps with what the existing composite-score analysis already identified as the best acquisition targets &mdash; <strong>Industrial O&amp;M, Facilities (trades sub-segments), Environmental, Health LTC sub-segment, Specialty Recycling sub-segment.</strong> The lens <em>refines</em>, it does not <em>rewrite</em>.</p>
+</div>
+</div>
+
+<!-- ============== SECTION 6: DECISION OPTIONS ============== -->
+<div class="section">
+<div class="stitle">Decision Options</div>
+<div class="wz-grid" style="grid-template-columns:repeat(3,1fr)">
+
+<div class="wz-c" style="border-left:4px solid #ff6b6b">
+<div class="rk" style="color:#ff6b6b">Option 1 &middot; Most Aggressive</div>
+<h3>Adopt as a Primary Filter</h3>
+<p style="font-size:.88em;margin-bottom:8px">Tag every sub-segment T1 / T2 / T3 on the dashboard. Add AI-Resilience as a 9th composite-scoring dimension. Rebuild rankings with T1 weight. Produce a top-T1 acquisition shortlist as the active M&amp;A pipeline.</p>
+<p style="font-size:.83em;color:var(--dim);margin-top:8px"><strong>Effect:</strong> Significant re-rank; Industrial O&amp;M, Facilities, Environmental rise; IT/Cyber, Financial, PM/Admin fall. <strong>Risk:</strong> Over-rotation on a 5-year forecast that could be wrong.</p>
+</div>
+
+<div class="wz-c" style="border-left:4px solid #fb923c">
+<div class="rk" style="color:#fb923c">Option 2 &middot; Balanced</div>
+<h3>Adopt as a Secondary Lens</h3>
+<p style="font-size:.88em;margin-bottom:8px">Add T1 / T2 / T3 tags to sub-segments on the Sector Deep Dives tab for visibility. <strong>Keep composite scoring as-is.</strong> Use the AI-resilience tag during target diligence rather than during target prioritization.</p>
+<p style="font-size:.83em;color:var(--dim);margin-top:8px"><strong>Effect:</strong> Adds visibility without changing rankings. Preserves optionality. <strong>Risk:</strong> May be ignored in practice if not weighted into scoring.</p>
+</div>
+
+<div class="wz-c" style="border-left:4px solid var(--dim)">
+<div class="rk" style="color:var(--dim)">Option 3 &middot; Conservative</div>
+<h3>Defer</h3>
+<p style="font-size:.88em;margin-bottom:8px">Park the framework in <code>research/</code>. Continue with current composite scoring. Revisit in Q3-Q4 2026 if AI-disruption signals strengthen materially (specific labor-displacement evidence, customer churn at AI-vulnerable peers, etc.).</p>
+<p style="font-size:.83em;color:var(--dim);margin-top:8px"><strong>Effect:</strong> No dashboard changes. <strong>Risk:</strong> If the thesis is right, we miss 6-12 months of better-targeted deal flow.</p>
+</div>
+
+</div>
+</div>
+
+<!-- ============== SECTION 7: QUESTIONS FOR LEADERSHIP ============== -->
+<div class="section">
+<div class="stitle">Questions for Leadership</div>
+<table style="margin-top:8px">
+<tr><th style="width:5%">#</th><th>Question</th></tr>
+<tr><td><strong>1</strong></td><td><strong>Does the thesis match the strategic concern?</strong> Is AI-resilience a real M&amp;A criterion in leadership's view, or is it adjacent to existing concerns (durability, technology disruption)?</td></tr>
+<tr><td><strong>2</strong></td><td><strong>Which of the three options should we pursue?</strong> Primary filter (Option 1), secondary lens (Option 2), or defer (Option 3)?</td></tr>
+<tr><td><strong>3</strong></td><td><strong>Are there T1-heavy categories not currently in our 11 zones</strong> that should be evaluated through this lens? Candidates worth considering: <em>data-center construction &amp; MEP contractors, dental / veterinary services, equipment rental (Sunbelt-style), specialty trades (fire/life safety, irrigation, pool service), cold-chain / refrigerated logistics, industrial equipment dealers (forklift, crane, generator), niche manufacturing for defense / aerospace.</em></td></tr>
+<tr><td><strong>4</strong></td><td><strong>How heavily should the lens weight against existing GC business overlap?</strong> A pure T1 filter would deprioritize most of what GC does today. A weighted blend (e.g., 60% existing composite score + 40% T1 weight) would preserve GC-fit while tilting toward T1.</td></tr>
+<tr><td><strong>5</strong></td><td><strong>Are there sub-segments within current zones that leadership wants flagged immediately</strong> as "preferred T1 targets" versus "deprioritize" &mdash; even before formal integration into the dashboard?</td></tr>
+</table>
+</div>
+
+<p style="font-size:.82em;color:var(--dim);margin-top:24px;text-align:center"><em>End of memo. Standalone version: <code>research/physical-durable-acquisition-lens.md</code>. Awaiting leadership feedback before any further dashboard integration.</em></p>
+
+</div>
+<!-- end tab-ailens -->
 
 <footer>GOLD CREEK M&A Analysis | Confidential | April 2026 | All figures sourced &mdash; no fabricated numbers</footer>
 </div>
